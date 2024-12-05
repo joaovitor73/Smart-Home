@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "158790758117",
+    "project_id": "project12-house12-app",
+    "storage_bucket": "project12-house12-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158790758117:android:a3b66d97937e91ef872e0c",
+        "android_client_info": {
+          "package_name": "com.houseapp12.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBtxQbTD4O3J7tl8Du4rCszGhoUsz9Mq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
