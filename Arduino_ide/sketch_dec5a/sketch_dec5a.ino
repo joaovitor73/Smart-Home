@@ -3,7 +3,7 @@
 #include <FirebaseClient.h>
 #include <WiFiClientSecure.h>
 
-#define WIFI_SSID "A 10"
+#define WIFI_SSID "A"
 #define WIFI_PASSWORD "12345678"
 #define API_KEY "AIzaSyAM7rxPXK3n8g69MNEXZzsLKOXn9cwARWk"
 #define USER_EMAIL "adm@gmail.com"
@@ -20,7 +20,9 @@ void asyncCB(AsyncResult &aResult);
 UserAuth user_auth(API_KEY, USER_EMAIL, USER_PASSWORD, 3000);
 AsyncClient aClient(ssl_client, getNetwork(network));
 
-unsigned long tmo = 0;
+unsigned long tmo = 0; 
+
+const byte led = 2;
 
 void setup(){
 
@@ -30,7 +32,7 @@ void setup(){
     unsigned long ms = millis();
     while (WiFi.status() != WL_CONNECTED)
     {
-       // Serial.print(".");
+        Serial.print(".");
         delay(300);
     }
     Serial.println();
@@ -44,7 +46,9 @@ void setup(){
     ssl_client.setInsecure();
     initializeApp(aClient, app, getAuth(user_auth), asyncCB, "authTask");
     app.getApp<RealtimeDatabase>(Database);
-   // Database.url(DATABASE_URL);
+    Database.url(DATABASE_URL);
+
+    pinMode(led, OUTPUT); 
 }
 
 void loop(){
@@ -52,19 +56,21 @@ void loop(){
     app.loop();
     Database.loop();
 
-    if (app.ready() && millis() - tmo > 3000)
+    if (app.ready())
     {
       
        tmo = millis();
        
        // User code can be put here
-       Database.get(aClient, "/test/int", asyncCB, "someTask");
-       //Serial.println("oi");
+       int v1 = Database.get<int>(aClient, "led/state");
+       Serial.println(v1);
+       digitalWrite(led, v1); 
     }
 }
 
 void asyncCB(AsyncResult &aResult)
 {
+  
 
     if (aResult.isEvent())
     {
