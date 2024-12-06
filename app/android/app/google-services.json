@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "573410949519",
-    "project_id": "apphouse-4fe2a",
-    "storage_bucket": "apphouse-4fe2a.firebasestorage.app"
+    "project_number": "651960021046",
+    "project_id": "smart-home-876c0",
+    "storage_bucket": "smart-home-876c0.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:573410949519:android:ebdfcefbffba5e916333fa",
+        "mobilesdk_app_id": "1:651960021046:android:a1e1431c4d903007926897",
         "android_client_info": {
           "package_name": "house.com.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBRiy8h5wYfHNLB9BrUK56TMPImoBZI__U"
+          "current_key": "AIzaSyATHQAkZBRhM9KXGRKnu06ghHWqWti93RQ"
         }
       ],
       "services": {
