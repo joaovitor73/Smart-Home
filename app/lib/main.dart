@@ -1,4 +1,5 @@
 import 'package:app/core/configure_providers.dart';
+import 'package:app/ui/widgets/HomeScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -68,6 +69,11 @@ class _AuthTestScreenState extends State<AuthTestScreen> {
       setState(() {
         _message = 'Login realizado com sucesso!';
       });
+      Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
     } catch (e) {
       setState(() {
         _message = 'Erro ao fazer login: $e';
