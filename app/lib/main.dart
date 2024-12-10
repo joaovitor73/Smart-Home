@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Inicializa o Firebase
+  await Firebase.initializeApp();
 
-  // Autenticação automática com as credenciais fixas
   await authenticateAdmin();
 
   runApp(MyApp());
@@ -41,40 +40,96 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final databaseRef =
-      FirebaseDatabase.instance.ref(); // Referência ao banco de dados
+  final databaseRef = FirebaseDatabase.instance.ref();
   String fetchedData = "Carregando dados...";
+  final TextEditingController _valueController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    listenToRealtimeChanges(); // Escuta as alterações em tempo real
+    listenToRealtimeChanges();
   }
 
   void listenToRealtimeChanges() {
-    // Escuta as mudanças em tempo real no nó "smart_home/json/comodos/sala/sensores"
     databaseRef
         .child("smart_home")
         .child("json")
         .child("comodos")
         .child("sala")
         .child("sensores")
+        .child("luz")
         .onValue
         .listen((event) {
       final data = event.snapshot.value;
       setState(() {
-        fetchedData =
-            data.toString(); // Atualiza o estado com os dados alterados
+        fetchedData = data.toString();
       });
     });
+  }
+
+  Future<void> updateLightValue(String value) async {
+    try {
+      await databaseRef
+          .child("smart_home")
+          .child("json")
+          .child("comodos")
+          .child("sala")
+          .child("sensores")
+          .child("luz")
+          .update({
+        "valor": value,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Valor atualizado com sucesso!")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erro ao atualizar o valor: $e")),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Firebase Realtime Database")),
-      body: Center(
-        child: Text(fetchedData),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Dados em tempo real: $fetchedData",
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _valueController,
+              decoration: InputDecoration(
+                labelText: "Novo valor para luz",
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number, // Apenas números
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                final newValue = _valueController.text;
+                if (newValue.isNotEmpty) {
+                  updateLightValue(newValue);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text("Por favor, insira um valor válido")),
+                  );
+                }
+              },
+              child: Text("Atualizar Valor"),
+            ),
+          ],
+        ),
       ),
     );
   }
