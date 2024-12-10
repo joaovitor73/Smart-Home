@@ -4,16 +4,6 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-/// Default [FirebaseOptions] for use with your Firebase apps.
-///
-/// Example:
-/// ```dart
-/// import 'firebase_options.dart';
-/// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -57,6 +47,7 @@ class DefaultFirebaseOptions {
     appId: '1:651960021046:android:a1e1431c4d903007926897',
     messagingSenderId: '651960021046',
     projectId: 'smart-home-876c0',
+    databaseURL: 'https://smart-home-876c0-default-rtdb.firebaseio.com',
     storageBucket: 'smart-home-876c0.firebasestorage.app',
   );
 }

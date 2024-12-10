@@ -1,158 +1,80 @@
-import 'package:app/core/configure_providers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(); // Inicializa o Firebase
 
-  final providers = await ConfigureProviders.createDependencyTree();
+  // Autenticação automática com as credenciais fixas
+  await authenticateAdmin();
 
-  runApp(
-    MultiProvider(
-      providers: providers.providers,
-      child: const MyApp(),
-    ),
-  );
+  runApp(MyApp());
+}
+
+Future<void> authenticateAdmin() async {
+  try {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: "adm@gmail.com",
+      password: "admin123",
+    );
+    print("Autenticação bem-sucedida!");
+  } catch (e) {
+    print("Erro ao autenticar: $e");
+    throw Exception("Falha na autenticação. Verifique as credenciais.");
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Firebase Auth Test',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const AuthTestScreen(),
+      home: HomeScreen(),
     );
   }
 }
 
-class AuthTestScreen extends StatefulWidget {
-  const AuthTestScreen({Key? key}) : super(key: key);
-
+class HomeScreen extends StatefulWidget {
   @override
-  State<AuthTestScreen> createState() => _AuthTestScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _AuthTestScreenState extends State<AuthTestScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  String _message = '';
+class _HomeScreenState extends State<HomeScreen> {
+  final databaseRef =
+      FirebaseDatabase.instance.ref(); // Referência ao banco de dados
+  String fetchedData = "Carregando dados...";
 
-  Future<void> _register(AuthService authService) async {
-    try {
-      await authService.signUpWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-      setState(() {
-        _message = 'Usuário registrado com sucesso!';
-      });
-    } catch (e) {
-      setState(() {
-        _message = 'Erro ao registrar: $e';
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    listenToRealtimeChanges(); // Escuta as alterações em tempo real
   }
 
-  Future<void> _login(AuthService authService) async {
-    try {
-      await authService.signInWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
+  void listenToRealtimeChanges() {
+    // Escuta as mudanças em tempo real no nó "smart_home/json/comodos/sala/sensores"
+    databaseRef
+        .child("smart_home")
+        .child("json")
+        .child("comodos")
+        .child("sala")
+        .child("sensores")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
       setState(() {
-        _message = 'Login realizado com sucesso!';
+        fetchedData =
+            data.toString(); // Atualiza o estado com os dados alterados
       });
-    } catch (e) {
-      setState(() {
-        _message = 'Erro ao fazer login: $e';
-      });
-    }
-  }
-
-  Future<void> _resetPassword(AuthService authService) async {
-    try {
-      await authService.resetPassword(_emailController.text.trim());
-      setState(() {
-        _message = 'E-mail de recuperação enviado!';
-      });
-    } catch (e) {
-      setState(() {
-        _message = 'Erro ao enviar e-mail de recuperação: $e';
-      });
-    }
-  }
-
-  Future<void> _logout(AuthService authService) async {
-    try {
-      await authService.signOut();
-      setState(() {
-        _message = 'Logout realizado com sucesso!';
-      });
-    } catch (e) {
-      setState(() {
-        _message = 'Erro ao fazer logout: $e';
-      });
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Teste de Firebase Auth')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'E-mail',
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Senha',
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => _register(authService),
-              child: const Text('Registrar'),
-            ),
-            ElevatedButton(
-              onPressed: () => _login(authService),
-              child: const Text('Login'),
-            ),
-            ElevatedButton(
-              onPressed: () => _resetPassword(authService),
-              child: const Text('Redefinir Senha'),
-            ),
-            ElevatedButton(
-              onPressed: () => _logout(authService),
-              child: const Text('Logout'),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _message,
-              style: TextStyle(
-                color: _message.contains('Erro') ? Colors.red : Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+      appBar: AppBar(title: Text("Firebase Realtime Database")),
+      body: Center(
+        child: Text(fetchedData),
       ),
     );
   }
