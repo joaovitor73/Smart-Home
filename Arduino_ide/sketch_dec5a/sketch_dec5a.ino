@@ -3,6 +3,7 @@
 #include <FirebaseClient.h>
 #include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
+#include <DHT.h>
 
 #define WIFI_SSID "A"
 #define WIFI_PASSWORD "12345678"
@@ -10,16 +11,23 @@
 #define USER_EMAIL "adm@gmail.com"
 #define USER_PASSWORD "admin123"
 #define DATABASE_URL "https://smart-home-876c0-default-rtdb.firebaseio.com/"
+#define DHTTYPE DHT22
+#define FIREBASE_PROJECT_ID "smart-home-876c0"
+#define FIREBASE_CLIENT_EMAIL "bbitprocessoseletivo@gmail.com"
 
 FirebaseApp app;
 DefaultNetwork network;
 WiFiClientSecure ssl_client;
 using AsyncClient = AsyncClientClass;
 RealtimeDatabase Database;
+Messaging messaging;
 
 void asyncCB(AsyncResult &aResult);
+void timeStatusCB(uint32_t &ts);
 UserAuth user_auth(API_KEY, USER_EMAIL, USER_PASSWORD, 3000);
 AsyncClient aClient(ssl_client, getNetwork(network));
+const char PRIVATE_KEY[] PROGMEM = "BKkIO1r9WjWnrezP3b2bHFBqcPcQmrtttRfBi97HjDttEiknRifWYfL75p8ksjs9A3LwOeNiJm8f08JUiWfMNGg";
+ServiceAuth sa_auth(timeStatusCB, FIREBASE_CLIENT_EMAIL, FIREBASE_PROJECT_ID, PRIVATE_KEY, 3000 /* expire period in seconds (<= 3600) */);
 
 unsigned long tmo = 0; 
 
@@ -27,8 +35,15 @@ const byte ledSala = 2;
 const byte ledCozinha = 18;
 const byte ledQuarto = 19;
 const byte ledBanheiro = 21;
+const byte DHTPIN = 5;
+
+
 const int pinoPIR = 15;
+const int LDR_PIN = 34; 
 int cachePresenca = 0;
+byte ldrValue = 0;
+
+DHT dht(DHTPIN, DHTTYPE);
 enum Comodo {
     SALA,
     QUARTO,
@@ -72,6 +87,7 @@ void setup(){
     ssl_client.setInsecure();
     initializeApp(aClient, app, getAuth(user_auth), asyncCB, "authTask");
     app.getApp<RealtimeDatabase>(Database);
+    app.getApp<Messaging>(messaging);
     Database.url(DATABASE_URL);
 
     pinMode(ledSala, OUTPUT); 
@@ -79,6 +95,8 @@ void setup(){
     pinMode(ledQuarto, OUTPUT); 
     pinMode(ledBanheiro, OUTPUT);
     pinMode(pinoPIR, INPUT); 
+    pinMode(LDR_PIN, INPUT);
+    dht.begin();
 }
 
 void loop(){
@@ -87,9 +105,11 @@ void loop(){
     Database.loop();
 
     if (app.ready()){  
-      //configureJson();
+    
+       //configureJson();
       getDados();
       // Database.get(aClient, "/smart_home/json", asyncCB);
+     //lerLdr();
     }
 }
 void asyncCB(AsyncResult &aResult)
@@ -120,9 +140,9 @@ void asyncCB(AsyncResult &aResult)
 void getDados(){
   String jsonData = Database.get<String>(aClient, "/smart_home/json");
   if (aClient.lastError().code() == 0) {
-    Serial.println("ok");
-    Serial.println("Retrieved JSON:");
-    Serial.println(jsonData);
+    //Serial.println("ok");
+    //Serial.println("Retrieved JSON:");
+    //Serial.println(jsonData);
 
     DynamicJsonDocument doc(2048);
     DeserializationError error = deserializeJson(doc, jsonData);
@@ -153,23 +173,6 @@ void getEstates(String jsonData, DynamicJsonDocument doc){
   }
 }
 
-int verificaUltimoValor(JsonObject sensorData){
-  int ultimoValor = 0;
-  if (sensorData.containsKey("estado")) {
-    ultimoValor = sensorData["estado"];
-  }
-  if (sensorData.containsKey("velocidade")) {
-    ultimoValor = sensorData["velocidade"];
-  }
-  if (sensorData.containsKey("valor")) {
-    ultimoValor = sensorData["valor"];
-  }
-  if (sensorData.containsKey("intensidade")) {
-    ultimoValor = sensorData["intensidade"];
-  }
-  return ultimoValor;
-}
-
 void swhitchComfortable(const char* nomeComodo, int ultimoValor, int id, const char* tipoSensor){
   Comodo comodo = getComodoEnum(nomeComodo);
   Sensor sensor = getSensoresEnum(tipoSensor);
@@ -189,7 +192,7 @@ void updateBanheiro(int valor, Sensor sensor,int id, const char* tipoSensor, con
    switch(sensor){ 
     case 4: digitalWrite(ledBanheiro, valor);
       break;
-    case 2: 
+    case 2: pushData(tipoSensor, id, map(analogRead(LDR_PIN), 0, 4095, 0, 255) , nomeComodo);
       break;
   }
 }
@@ -198,11 +201,12 @@ void updateCozinha(int valor, Sensor sensor, int id, const char* tipoSensor, con
    switch(sensor){
     case 4: digitalWrite(ledCozinha, valor);
       break;
-    case 3: 
+    case 3: pushData(tipoSensor, id, dht.readTemperature() , nomeComodo);
       break;
-    case 2: 
+    case 2: ldrValue = map(analogRead(LDR_PIN), 0, 4095, 0, 255);
+            pushData(tipoSensor, id, ldrValue , nomeComodo);
       break;
-    case 1: 
+    case 1: pushData(tipoSensor, id, dht.readHumidity() , nomeComodo);
       break;
   }
 }
@@ -219,11 +223,12 @@ void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, cons
       break;
     case 4: digitalWrite(ledQuarto, valor);
       break;
-    case 3: 
+    case 3: pushData(tipoSensor, id, dht.readTemperature() , nomeComodo);
       break;
-    case 2: 
+    case 2: ldrValue = map(analogRead(LDR_PIN), 0, 4095, 0, 255);
+            pushData(tipoSensor, id, ldrValue , nomeComodo);
       break;
-    case 1: 
+    case 1: pushData(tipoSensor, id, dht.readHumidity() , nomeComodo);
       break;
   }
 }
@@ -232,13 +237,21 @@ void updateSala(int valor, Sensor sensor, int id, const char* tipoSensor, const 
    switch(sensor){
     case 4: digitalWrite(ledSala, valor);
       break;
-    case 2: 
+    case 2: ldrValue = map(analogRead(LDR_PIN), 0, 4095, 0, 255);
+            pushData(tipoSensor, id, ldrValue , nomeComodo);
       break;
     case 0: pushData(tipoSensor, id, digitalRead(pinoPIR), nomeComodo);
       break;
   }
 }
 
+
+void pushData(const char* tipoSensor, int id, int valor, const char* nomeComodo){
+  String caminho = String("/smart_home/json/comodos/") + nomeComodo + "/sensores/" + tipoSensor + "/valor";
+  if (Database.set<int>(aClient,caminho, valor)) {
+    Serial.println("Dados de " + String(tipoSensor) + " enviados com sucesso!");
+  } 
+}
 
 Comodo getComodoEnum(const char* nomeComodo) {
     if (strcmp(nomeComodo, "sala") == 0) return SALA;
@@ -306,40 +319,5 @@ void configureJson() {
     Serial.println("Erro ao salvar JSON.");
 }
 
-void pushData(const char* tipoSensor, int id, int valor, const char* nomeComodo){
 
-   JsonWriter writer;
-
-  // Cria o objeto JSON principal
-  object_t json;
-
-  // Cria os dados que vamos inserir dentro do objeto json
-  object_t sala;
-  writer.create(sala, "valor", cont);  // O valor da luz no sensor
-
-  // Junta o objeto sala com o objeto json
-  writer.join(json, 1, sala);  // Associa sala ao json
-
-  // Envia o objeto json para o Firebase
-  if (Database.update<object_t>(aClient, "/smart_home/json/comodos/sala/sensores/luz", json)) {
-    Serial.println("Dados de luz enviados com sucesso!");
-  } else {
-   // Serial.println("Erro ao enviar dados de luz: " + firebaseData.errorReason());
-  }
-   //if(cachePresenca != valor){
-    /*object_t json;
-    JsonWriter writer;
-    String caminho = String("/smart_home/json/comodos/") + nomeComodo + "/sensores/" + tipoSensor + "/valor" + cont;
-    writer.create(json, caminho, valor); 
-
-    bool sucesso = Database.update(aClient, caminho, json);
-
-    if (sucesso) {
-      Serial.println("Dados enviados com sucesso!" + valor);
-    }
-   cachePresenca = valor;
-   //}
-  // digitalWrite(2, valor);*/
-  cont++;
-}
 
