@@ -1,15 +1,27 @@
+import 'package:app/core/configure_providers.dart';
+import 'package:app/services/realtime_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Cria o tree de dependências
+  final configureProviders = await ConfigureProviders.createDependencyTree();
 
   await authenticateAdmin();
 
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: configureProviders.providers,
+      child: MyApp(),
+    ),
+  );
 }
 
 Future<void> authenticateAdmin() async {
@@ -47,47 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    listenToRealtimeChanges();
-  }
-
-  void listenToRealtimeChanges() {
-    databaseRef
-        .child("smart_home")
-        .child("json")
-        .child("comodos")
-        .child("sala")
-        .child("sensores")
-        .child("luz")
-        .onValue
-        .listen((event) {
-      final data = event.snapshot.value;
-      setState(() {
-        fetchedData = data.toString();
-      });
-    });
-  }
-
-  Future<void> updateLightValue(String value) async {
-    try {
-      await databaseRef
-          .child("smart_home")
-          .child("json")
-          .child("comodos")
-          .child("sala")
-          .child("sensores")
-          .child("luz")
-          .update({
-        "valor": value,
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Valor atualizado com sucesso!")),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro ao atualizar o valor: $e")),
-      );
-    }
+    getValoresSensorComodo("sala", "luz");
   }
 
   @override
@@ -118,7 +90,13 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 final newValue = _valueController.text;
                 if (newValue.isNotEmpty) {
-                  updateLightValue(newValue);
+                  Provider.of<RealtimeService>(context, listen: false)
+                      .realtimeService
+                      .updateData(
+                    comodo: "sala",
+                    sensor: "luz",
+                    keyValuePairs: {"valor": newValue},
+                  );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -132,5 +110,55 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  //pega os valores de um sensor de um comodo
+  void getValoresSensorComodo(String comodo, String sensor) {
+    databaseRef
+        .child("smart_home")
+        .child("json")
+        .child("comodos")
+        .child(comodo)
+        .child("sensores")
+        .child(sensor)
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        fetchedData = data.toString();
+      });
+    });
+  }
+
+  //pega todos os sensores de um comodo
+  void getSensoresComodo(String comodo) {
+    databaseRef
+        .child("smart_home")
+        .child("json")
+        .child("comodos")
+        .child(comodo)
+        .child("sensores")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        fetchedData = data.toString();
+      });
+    });
+  }
+
+  //pega todos os comodos
+  void getComodos() {
+    databaseRef
+        .child("smart_home")
+        .child("json")
+        .child("comodos")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        fetchedData = data.toString();
+      });
+    });
   }
 }
