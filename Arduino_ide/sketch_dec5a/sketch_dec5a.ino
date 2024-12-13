@@ -13,7 +13,7 @@
 #define DATABASE_URL "https://smart-home-876c0-default-rtdb.firebaseio.com/"
 #define DHTTYPE DHT22
 #define FIREBASE_PROJECT_ID "smart-home-876c0"
-#define FIREBASE_CLIENT_EMAIL "bbitprocessoseletivo@gmail.com"
+#define FIREBASE_CLIENT_EMAIL "firebase-adminsdk-vydhp@smart-home-876c0.iam.gserviceaccount.com"
 
 FirebaseApp app;
 DefaultNetwork network;
@@ -24,9 +24,10 @@ Messaging messaging;
 
 void asyncCB(AsyncResult &aResult);
 void timeStatusCB(uint32_t &ts);
+void getMsg(Messages::Message &msg);
 UserAuth user_auth(API_KEY, USER_EMAIL, USER_PASSWORD, 3000);
 AsyncClient aClient(ssl_client, getNetwork(network));
-const char PRIVATE_KEY[] PROGMEM = "BKkIO1r9WjWnrezP3b2bHFBqcPcQmrtttRfBi97HjDttEiknRifWYfL75p8ksjs9A3LwOeNiJm8f08JUiWfMNGg";
+const char PRIVATE_KEY[] PROGMEM = "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDOhwMWDWsUWLAP\nQei7NlZUsaT8KxiX4jphHKcW2mJP0MFljg9ttQbvaIRApTGjZ+PQ+ENfqlXovKiY\n0LGpU7YVObVxp7/uJOOZipJdQVwGYEroX4Mq4Mf9/CwYfkS09aXsPon94VYGllHg\nbNXc5ag7UOk/TMC4MmWdlKBaXaY6MLKbiWrPdt3VFXkPvgXeHQvIXxaBn9mXvwSd\nJqoSkh3xyg/k8GTgLbeKSsY11ugs4y8OD1GLDHtjePdWbyxL9Rkr/zofo9GMcYAd\n9OutztEEnNwW879Q0anPHbO363YfGs4KelE4tV7b5RsEnHEmWcTyHTekcsgPOAS0\nr0uJYmLhAgMBAAECggEAYgeEx/1jg7tbCkrzEJXIoZfWo5lDKajIpBrJFthezNre\nSXmGSkEggxfdmp+usYzY/nIw7KI59+hAsJRyl9hzt5x2SvXgbMXWwKUdNyWUbDRd\nqfHYHUynsR92wMOCklB9SuceccL5JdRJFdkjJCBgW5Nau2CPo37Ma+FFwc7s3XYw\nmagzZLNqiPBYMPhHh7zsSKBuC0GgOyLWOLG9NK7VuydA+pXik+qzvwVZIothvBq2\nodf53FLnIBuO1GCss2zvFoAKFTFDV/snxL8iV7xhOOJBZ+py4hc1/q+3Nqh5s4J8\nkv7t2WT00MheViOz8VtKkY6Yi9xymC/K/gODSGn+xwKBgQDsi++PKn+D++5PyfLd\n6qy3gYK6TuaYAtDZQqvzJpiOuQuzm7WJ/ZSnxWR9rbwEownEtvEpiEWSvlcClQXU\nV+zfLTcFCzKwBMVJl6rqvDxrTUrf7+aXX849lZKkrw1vvRMjtyJ/sSlTUtt4UVEy\n/uplmWXlGE9TeawuFM36fAA6kwKBgQDfgxNDf2qcnZe/kN4gB6WS9fAml/UxIgVa\nZKWyu8yB856r7sfBaYsaXOG02G/61hzbyKr8i0xt3ETamTbfCTa9XipTymCgWV17\nsMAH4/M+JGpHv2CDuZyGL4e+OML2mlntT1ftPm3nFsCwI51B8GsyUvVMVJKh75xx\nr9ZPsN5xOwKBgCE1sEdoTwjHqPiYwLk5RlBpJWJky2kSFCI8gwmbJJX9EtB/jug1\nqtY3F1mxt5DrFucATDFpiWMFyA97vprGUWIv5eaWYOJneQ9Q9NUJ4m2qJ1XzR2t/\nLuRkiHcIgJlscTB1eKl2xPeGzXtB52WCdoQXGkAkvpZYobzCfPyqxhlzAoGBAMnq\nusteXyyvPbiEofYjklOqNFJZMts5FcbsZ7iI6Z54PF6sbu7ubwjY4dojMT5UkWuH\n49gT627P76/fe++PflEisXBSwmn5cXddXI2EQ2lfMlgwrnsxghLC+4k/8/kdxaGZ\n7R/ZJyX9qwM0mUtJaz3iLdHQEUuTkCwwIpaJfNqjAoGBAOkAzCXkicYmZC4QLlOM\nFIWgoJZ3XV33Hed9qOcieJGxAMNkrepKmVt9wxOxwl1Y5RfYKpaLqhoaObpoHFCr\nkTxNZBJx7UnqrIJR6FaQvAbqIJqt8nae902DMgxJLGtotZRVC+WdjmceoKqJr0qW\nB5KVGU4OJ00lnzctp//IAVjd\n-----END PRIVATE KEY-----\n";
 ServiceAuth sa_auth(timeStatusCB, FIREBASE_CLIENT_EMAIL, FIREBASE_PROJECT_ID, PRIVATE_KEY, 3000 /* expire period in seconds (<= 3600) */);
 
 unsigned long tmo = 0; 
@@ -86,6 +87,7 @@ void setup(){
     Serial.println("Initializing app...");
     ssl_client.setInsecure();
     initializeApp(aClient, app, getAuth(user_auth), asyncCB, "authTask");
+    initializeApp(aClient, app, getAuth(sa_auth), asyncCB, "authTask");
     app.getApp<RealtimeDatabase>(Database);
     app.getApp<Messaging>(messaging);
     Database.url(DATABASE_URL);
@@ -100,18 +102,95 @@ void setup(){
 }
 
 void loop(){
-
+    JWT.loop(app.getAuth());
     app.loop();
     Database.loop();
-
+    messaging.loop();
     if (app.ready()){  
     
        //configureJson();
       getDados();
       // Database.get(aClient, "/smart_home/json", asyncCB);
      //lerLdr();
+       Serial.println("Sending message...");
+
+        Messages::Message msg;
+        getMsg(msg);
+
+        // You can set the content of msg object directly with msg.setContent("your content")
+
+        messaging.send(aClient, Messages::Parent(FIREBASE_PROJECT_ID), msg, asyncCB, "fcmSendTask");
     }
 }
+
+void getMsg(Messages::Message &msg)
+{
+    msg.topic("test");
+    // msg.token("DEVICE_TOKEN"); // Registration token to send a message to
+    // msg.condition("'foo' in topics && 'bar' in topics");
+
+    // Basic notification
+    Messages::Notification notification;
+    notification.body("Notification body").title("Notification title");
+
+    // Library does not provide JSON parser library, the following JSON writer class will be used with
+    // object_t for simple demonstration.
+
+    object_t data, obj1, obj2, obj3, obj4;
+    JsonWriter writer;
+
+    writer.create(obj1, "name", string_t("wrench"));
+    writer.create(obj2, "mass", string_t("1.3kg"));
+    writer.create(obj3, "count", string_t("3"));
+    writer.join(data, 3 /* no. of object_t (s) to join */, obj1, obj2, obj3);
+
+    // object_t data2("{\"name\":\"wrench\",\"mass\":\"1.3kg\",\"count\":\"3\"}");
+
+    msg.data(data);
+
+    data.clear();
+
+    Messages::AndroidConfig androidConfig;
+
+    // Priority of a message to send to Android devices.
+    // https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidmessagepriority
+    androidConfig.priority(Messages::AndroidMessagePriority::_HIGH);
+
+    Messages::AndroidNotification androidNotification;
+
+    // Set the relative priority for this notification.
+    // Priority is an indication of how much of the user's attention should be consumed by this notification.
+    // Low-priority notifications may be hidden from the user in certain situations,
+    // while the user might be interrupted for a higher-priority notification.
+    // https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#NotificationPriority
+    androidNotification.notification_priority(Messages::NotificationPriority::PRIORITY_HIGH);
+
+    androidConfig.notification(androidNotification);
+
+    msg.android(androidConfig);
+
+    msg.notification(notification);
+}
+
+void timeStatusCB(uint32_t &ts)
+{
+#if defined(ESP8266) || defined(ESP32) || defined(CORE_ARDUINO_PICO)
+    if (time(nullptr) < FIREBASE_DEFAULT_TS)
+    {
+
+        configTime(3 * 3600, 0, "pool.ntp.org");
+        while (time(nullptr) < FIREBASE_DEFAULT_TS)
+        {
+            delay(100);
+        }
+    }
+    ts = time(nullptr);
+#elif __has_include(<WiFiNINA.h>) || __has_include(<WiFi101.h>)
+    ts = WiFi.getTime();
+#endif
+}
+
+
 void asyncCB(AsyncResult &aResult)
 {
 
