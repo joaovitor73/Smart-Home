@@ -40,6 +40,9 @@ const byte DHTPIN = 5;
 const byte redLedRGB = 25;
 const byte greenLedRGB = 33;
 const byte blueLedRGB = 32;
+const byte pinEn1 = 23;
+const byte motorQuartoA1 = 4;
+const byte motorQuartoB1 = 15;
 
 const int pinoPIR = 15;
 const int LDR_PIN = 34; 
@@ -104,6 +107,9 @@ void setup(){
     pinMode(redLedRGB, OUTPUT);
     pinMode(greenLedRGB, OUTPUT);
     pinMode(blueLedRGB, OUTPUT);
+    pinMode(motorQuartoA1, OUTPUT);
+    pinMode(motorQuartoB1, OUTPUT);
+    pinMode(pinEn1, OUTPUT);
 }
 
 void loop(){
@@ -302,11 +308,20 @@ void updateCozinha(int valor, Sensor sensor, int id, const char* tipoSensor, con
 
 void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, const char* nomeComodo){
    switch(sensor){
+    case 8: //servo
+      Serial.print("case 8:");
+      Serial.println(valor);
+    break;
     case 7: 
       break;
-    case 6: 
+    case 6: //motor
+      analogWrite(pinEn1, valor);
+      digitalWrite(motorQuartoA1, HIGH);
+      digitalWrite(motorQuartoB1, LOW);
       break;
-    case 5:
+    case 5: 
+      Serial.print("case 5:");
+      Serial.println(valor);
       break;
     case 4: digitalWrite(ledQuarto, valor);
       break;
@@ -393,6 +408,7 @@ void configureJson() {
         "lcd": {"id": 14, "valor": 1, "msg": 0},
         "motor": {"id": 15, "valor": 0},
         "led_rgb": {"id": 16, "r": 0, "g": 0, "b": 0}
+        "servo": {"id": 17, "valor": 0},
       }
     }
   }
