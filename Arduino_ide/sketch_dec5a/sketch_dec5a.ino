@@ -37,7 +37,9 @@ const byte ledCozinha = 18;
 const byte ledQuarto = 19;
 const byte ledBanheiro = 21;
 const byte DHTPIN = 5;
-
+const byte redLedRGB = 25;
+const byte greenLedRGB = 33;
+const byte blueLedRGB = 32;
 
 const int pinoPIR = 15;
 const int LDR_PIN = 34; 
@@ -99,6 +101,9 @@ void setup(){
     pinMode(pinoPIR, INPUT); 
     pinMode(LDR_PIN, INPUT);
     dht.begin();
+    pinMode(redLedRGB, OUTPUT);
+    pinMode(greenLedRGB, OUTPUT);
+    pinMode(blueLedRGB, OUTPUT);
 }
 
 void loop(){
@@ -112,14 +117,14 @@ void loop(){
       getDados();
       // Database.get(aClient, "/smart_home/json", asyncCB);
      //lerLdr();
-       Serial.println("Sending message...");
+     /*  Serial.println("Sending message...");
 
         Messages::Message msg;
         getMsg(msg);
 
         // You can set the content of msg object directly with msg.setContent("your content")
 
-        messaging.send(aClient, Messages::Parent(FIREBASE_PROJECT_ID), msg, asyncCB, "fcmSendTask");
+        messaging.send(aClient, Messages::Parent(FIREBASE_PROJECT_ID), msg, asyncCB, "fcmSendTask");*/
     }
 }
 
@@ -247,14 +252,19 @@ void getEstates(String jsonData, DynamicJsonDocument doc){
     for (JsonPair sensor : sensores) {
       const char* tipoSensor = sensor.key().c_str(); 
       JsonObject sensorData = sensor.value().as<JsonObject>();
-      swhitchComfortable(nomeComodo, sensorData["valor"], sensorData["id"], tipoSensor);
+      swhitchComfortable(nomeComodo, sensorData["valor"], sensorData["id"], tipoSensor, sensorData);
     }
   }
 }
 
-void swhitchComfortable(const char* nomeComodo, int ultimoValor, int id, const char* tipoSensor){
+void swhitchComfortable(const char* nomeComodo, int ultimoValor, int id, const char* tipoSensor, JsonObject sensorData){
   Comodo comodo = getComodoEnum(nomeComodo);
   Sensor sensor = getSensoresEnum(tipoSensor);
+  if(sensor == 8){
+    analogWrite(redLedRGB, sensorData["r"]);
+    analogWrite(greenLedRGB, sensorData["g"]);
+    analogWrite(blueLedRGB, sensorData["b"]);
+  }
   switch(comodo){
     case 3: updateBanheiro(ultimoValor, sensor, id, tipoSensor, nomeComodo);
       break;
@@ -292,8 +302,6 @@ void updateCozinha(int valor, Sensor sensor, int id, const char* tipoSensor, con
 
 void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, const char* nomeComodo){
    switch(sensor){
-    case 8: 
-      break;
     case 7: 
       break;
     case 6: 
