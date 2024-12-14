@@ -1,4 +1,5 @@
 import 'package:app/core/configure_providers.dart';
+import 'package:app/services/geolocator_service.dart';
 import 'package:app/services/realtime_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,7 +10,6 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
   // Cria o tree de dependências
   final configureProviders = await ConfigureProviders.createDependencyTree();
 
@@ -54,10 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final databaseRef = FirebaseDatabase.instance.ref();
   String fetchedData = "Carregando dados...";
   final TextEditingController _valueController = TextEditingController();
+  late final position;
 
+  late GeoLocatorService geoLocatorService;
   @override
   void initState() {
     super.initState();
+    geoLocatorService = Provider.of<GeoLocatorService>(context, listen: false);
+    geoLocatorService.captureLocation();
     getValoresSensorComodo("sala", "luz");
   }
 
