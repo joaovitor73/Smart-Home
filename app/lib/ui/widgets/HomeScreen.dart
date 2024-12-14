@@ -1,3 +1,4 @@
+import 'package:app/ui/widgets/AtuadoresItem.dart';
 import 'package:app/ui/widgets/ConfigureScreen.dart';
 import 'package:app/ui/widgets/DeviceItem.dart';
 import 'package:app/ui/widgets/RoomCard.dart';
@@ -90,69 +91,55 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16.0),
         children: [
           RoomCard(
-            roomName: 'Sala de Estar',
-            temperature: livingRoomTemperature,
-            humidity: livingRoomHumidity,
+            icon: Icons.home,
+            roomName: 'Sala',
             devices: [
               DeviceItem(
                 name: 'Luz',
                 status: livingRoomLight,
-                icon: Icons.lightbulb,
+                icon: Icons.light,
               ),
               DeviceItem(
-                name: 'Temperatura',
+                name: 'Presença',
                 status: livingRoomTemperature,
-                icon: Icons.thermostat,
-              ),
-              DeviceItem(
-                name: 'Umidade',
-                status: livingRoomHumidity,
-                icon: Icons.water_drop,
+                icon: Icons.priority_high_rounded,
               ),
             ],
-            onConfigure: () {
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      ConfigurationScreen(roomName: 'Sala de Estar'),
+                      const ConfigurationScreen(roomName: 'Sala'),
                 ),
               );
             },
+            atuadores: [
+              ActuatorControlWidget(actuatorName: 'LED', icon: Icons.lightbulb)
+            ],
           ),
           const SizedBox(height: 16.0),
           RoomCard(
             roomName: 'Cozinha',
-            temperature: 'N/A',
-            humidity: 'N/A',
+            icon: Icons.kitchen,
             devices: [
               DeviceItem(
-                name: 'Shutter',
+                name: 'Umidade',
                 status: 'Aberto 100%',
-                icon: Icons.window,
+                icon: Icons.water_drop,
               ),
               DeviceItem(
-                name: 'Spotlights',
+                name: 'Luz',
                 status: 'Desligado',
                 icon: Icons.light,
               ),
               DeviceItem(
-                name: 'Worktop',
-                status: 'Desligado',
-                icon: Icons.kitchen,
-              ),
-              DeviceItem(
-                name: 'Fridge',
+                name: 'Temperatura',
                 status: 'Fechado',
-                icon: Icons.kitchen,
-              ),
-              DeviceItem(
-                name: 'Nest Audio',
-                status: 'Ligado',
-                icon: Icons.speaker,
+                icon: Icons.thermostat,
               ),
             ],
-            onConfigure: () {
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -161,48 +148,73 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
+            atuadores: [
+              ActuatorControlWidget(
+                actuatorName: 'LED',
+                icon: Icons.lightbulb,
+              )
+            ],
           ),
           const SizedBox(height: 16.0),
           RoomCard(
-            roomName: 'Energia',
-            temperature: 'N/A',
-            humidity: 'N/A',
+            icon: Icons.bedroom_parent,
+            roomName: 'Quarto',
             devices: const [
               DeviceItem(
-                name: 'EV',
-                status: 'Desconectado',
-                icon: Icons.electric_car,
+                name: 'Umidade',
+                status: 'Aberto 100%',
+                icon: Icons.water_drop,
               ),
               DeviceItem(
-                name: 'Last charge',
-                status: '16,3 kWh',
-                icon: Icons.battery_charging_full,
+                name: 'Temperatura',
+                status: 'Fechado',
+                icon: Icons.thermostat,
               ),
               DeviceItem(
-                name: 'Home power',
+                name: 'Luz',
                 status: 'N/A',
-                icon: Icons.electrical_services,
-              ),
-              DeviceItem(
-                name: 'Voltage',
-                status: 'N/A',
-                icon: Icons.flash_on,
+                icon: Icons.light,
               ),
             ],
-            onConfigure: () {
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ConfigurationScreen(roomName: 'Quarto'),
+                ),
+              );
+            },
+            atuadores: [
+              ActuatorControlWidget(actuatorName: 'LED', icon: Icons.lightbulb)
+            ],
+          ),
+          RoomCard(
+            icon: Icons.bathtub,
+            roomName: 'Banheiro',
+            devices: const [
+              DeviceItem(
+                name: 'Luz',
+                status: 'Aberto 100%',
+                icon: Icons.light,
+              ),
+            ],
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      ConfigurationScreen(roomName: 'Energia'),
+                      ConfigurationScreen(roomName: 'Banheiro'),
                 ),
               );
             },
+            atuadores: [
+              ActuatorControlWidget(actuatorName: 'LED', icon: Icons.lightbulb)
+            ],
           ),
           const SizedBox(height: 20.0),
           TextField(
             controller: _lightController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Novo valor para Luz",
               border: OutlineInputBorder(),
             ),
