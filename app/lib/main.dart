@@ -7,9 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  await Firebase.initializeApp();
-
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   // Cria o tree de dependências
   final configureProviders = await ConfigureProviders.createDependencyTree();
