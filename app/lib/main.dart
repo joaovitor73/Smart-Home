@@ -1,4 +1,5 @@
 import 'package:app/core/configure_providers.dart';
+import 'package:app/domain/Sensor.dart';
 import 'package:app/services/geolocator_service.dart';
 import 'package:app/services/realtime_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,13 +55,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final databaseRef = FirebaseDatabase.instance.ref();
   String fetchedData = "Carregando dados...";
   final TextEditingController _valueController = TextEditingController();
-  late final position;
 
   late GeoLocatorService geoLocatorService;
+  late RealtimeService realtimeService;
   @override
   void initState() {
     super.initState();
     geoLocatorService = Provider.of<GeoLocatorService>(context, listen: false);
+    realtimeService = Provider.of<RealtimeService>(context, listen: false);
     geoLocatorService.captureLocation();
     getValoresSensorComodo("sala", "luz");
   }
@@ -92,14 +94,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ElevatedButton(
               onPressed: () {
                 final newValue = _valueController.text;
+                Sensor sensor = Sensor(
+                  comodo: "sala",
+                  nome: "luz",
+                  dados: {"valor": newValue},
+                );
                 if (newValue.isNotEmpty) {
-                  Provider.of<RealtimeService>(context, listen: false)
-                      .realtimeService
-                      .updateData(
-                    comodo: "sala",
-                    sensor: "luz",
-                    keyValuePairs: {"valor": newValue},
-                  );
+                  realtimeService.updateData(sensor: sensor);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
