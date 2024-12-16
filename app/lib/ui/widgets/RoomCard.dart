@@ -9,13 +9,13 @@ class RoomCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const RoomCard({
-    Key? key,
+    super.key,
     required this.icon,
     required this.atuadores,
     required this.roomName,
     required this.devices,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,19 +50,15 @@ class RoomCard extends StatelessWidget {
               const SizedBox(height: 8.0),
               Divider(color: Colors.blueGrey[300]), // Linha divisória
               const SizedBox(height: 8.0),
-              ...devices
-                  .map((device) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: device,
-                      ))
-                  .toList(),
+              ...devices.map((device) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: device,
+                  )),
               const SizedBox(height: 8.0),
-              ...atuadores
-                  .map((atuador) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: atuador,
-                      ))
-                  .toList(),
+              ...atuadores.map((atuador) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: atuador,
+                  )),
             ],
           ),
         ),

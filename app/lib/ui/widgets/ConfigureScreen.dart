@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class ConfigurationScreen extends StatelessWidget {
   final String roomName;
 
-  const ConfigurationScreen({Key? key, required this.roomName})
-      : super(key: key);
+  const ConfigurationScreen({super.key, required this.roomName});
 
   @override
   Widget build(BuildContext context) {

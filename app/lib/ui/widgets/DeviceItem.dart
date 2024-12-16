@@ -6,11 +6,11 @@ class DeviceItem extends StatelessWidget {
   final IconData icon;
 
   const DeviceItem({
-    Key? key,
+    super.key,
     required this.name,
     required this.status,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

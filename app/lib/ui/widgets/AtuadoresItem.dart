@@ -5,10 +5,10 @@ class ActuatorControlWidget extends StatefulWidget {
   final IconData icon; // Ícone a ser exibido
 
   const ActuatorControlWidget({
-    Key? key,
+    super.key,
     required this.actuatorName,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   State<ActuatorControlWidget> createState() => _ActuatorControlWidgetState();
@@ -110,7 +110,7 @@ class _ActuatorControlWidgetState extends State<ActuatorControlWidget> {
 }
 
 class LedRgbControlWidget extends StatefulWidget {
-  const LedRgbControlWidget({Key? key}) : super(key: key);
+  const LedRgbControlWidget({super.key});
 
   @override
   State<LedRgbControlWidget> createState() => _LedRgbControlWidgetState();
@@ -249,7 +249,7 @@ class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
 }
 
 class LcdControlWidget extends StatefulWidget {
-  const LcdControlWidget({Key? key}) : super(key: key);
+  const LcdControlWidget({super.key});
 
   @override
   State<LcdControlWidget> createState() => _LcdControlWidgetState();
