@@ -73,17 +73,33 @@ class _ActuatorControlWidgetState extends State<ActuatorControlWidget> {
                   color: Colors.grey[700],
                 ),
               ),
-              Slider(
-                value: power,
-                min: 0,
-                max: 100,
-                divisions: 20,
-                label: "${power.toStringAsFixed(0)}%",
-                onChanged: (value) {
-                  setState(() {
-                    power = value;
-                  });
-                },
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor:
+                      Colors.orangeAccent.shade100, // Cor da faixa ativa
+                  inactiveTrackColor:
+                      Colors.yellow.shade50, // Cor da faixa inativa
+                  trackHeight: 12.0, // Altura da faixa
+                  thumbColor: Colors.orangeAccent, // Cor do botão deslizante
+                  thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 10.0), // Tamanho do botão
+                  overlayColor: Colors.orangeAccent
+                      .withAlpha(50), // Efeito ao tocar no botão
+                  overlayShape: const RoundSliderOverlayShape(
+                      overlayRadius: 20.0), // Tamanho da sobreposição
+                ),
+                child: Slider(
+                  value: power,
+                  min: 0,
+                  max: 100,
+                  divisions: 20,
+                  label: "${power.toStringAsFixed(0)}%", // Texto da porcentagem
+                  onChanged: (value) {
+                    setState(() {
+                      power = value;
+                    });
+                  },
+                ),
               ),
             ],
           ],
@@ -97,11 +113,11 @@ class LedRgbControlWidget extends StatefulWidget {
   const LedRgbControlWidget({Key? key}) : super(key: key);
 
   @override
-  _LedRgbControlWidgetState createState() => _LedRgbControlWidgetState();
+  State<LedRgbControlWidget> createState() => _LedRgbControlWidgetState();
 }
 
 class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
-  bool isRgbOn = false;
+  bool isRgbOn = false; // Estado do LED RGB (ligado/desligado)
   double red = 0;
   double green = 0;
   double blue = 0;
@@ -112,145 +128,119 @@ class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      margin: const EdgeInsets.all(16),
+      elevation: 3,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Controle do LED RGB",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueGrey[800],
-              ),
-            ),
-            const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("RGB"),
+                CircleAvatar(
+                  backgroundColor: isRgbOn
+                      ? Colors.blue.shade50
+                      : Colors.grey.shade300, // Cor ao ligar/desligar
+                  child: Icon(
+                    Icons.lightbulb,
+                    color: isRgbOn ? Colors.blueAccent : Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  "Luz RGB",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isRgbOn ? Colors.blueAccent : Colors.grey.shade700,
+                  ),
+                ),
+                const Spacer(),
                 Switch(
                   value: isRgbOn,
                   onChanged: (value) {
                     setState(() {
                       isRgbOn = value;
                       if (!isRgbOn) {
-                        red = green = blue = 0;
+                        red = green = blue = 0; // Zera os valores ao desligar
                       }
                     });
                   },
+                  activeColor: Colors.blueAccent,
+                  inactiveThumbColor: Colors.grey,
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Slider(
+            if (isRgbOn) ...[
+              const SizedBox(height: 16),
+              Text(
+                "RGB: R${red.toInt()} G${green.toInt()} B${blue.toInt()}",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: Colors.redAccent,
+                  inactiveTrackColor: Colors.red.shade50,
+                  thumbColor: Colors.red,
+                  trackHeight: 8.0,
+                ),
+                child: Slider(
                   value: red,
                   min: 0,
                   max: 255,
                   divisions: 255,
                   label: "R: ${red.toInt()}",
-                  activeColor: Colors.red,
-                  onChanged: isRgbOn
-                      ? (value) {
-                          setState(() {
-                            red = value;
-                          });
-                        }
-                      : null,
+                  onChanged: (value) {
+                    setState(() {
+                      red = value;
+                    });
+                  },
                 ),
-                Slider(
+              ),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: Colors.greenAccent,
+                  inactiveTrackColor: Colors.green.shade50,
+                  thumbColor: Colors.green,
+                  trackHeight: 8.0,
+                ),
+                child: Slider(
                   value: green,
                   min: 0,
                   max: 255,
                   divisions: 255,
                   label: "G: ${green.toInt()}",
-                  activeColor: Colors.green,
-                  onChanged: isRgbOn
-                      ? (value) {
-                          setState(() {
-                            green = value;
-                          });
-                        }
-                      : null,
+                  onChanged: (value) {
+                    setState(() {
+                      green = value;
+                    });
+                  },
                 ),
-                Slider(
+              ),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: Colors.blueAccent,
+                  inactiveTrackColor: Colors.blue.shade50,
+                  thumbColor: Colors.blue,
+                  trackHeight: 8.0,
+                ),
+                child: Slider(
                   value: blue,
                   min: 0,
                   max: 255,
                   divisions: 255,
                   label: "B: ${blue.toInt()}",
-                  activeColor: Colors.blue,
-                  onChanged: isRgbOn
-                      ? (value) {
-                          setState(() {
-                            blue = value;
-                          });
-                        }
-                      : null,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ServoControlWidget extends StatefulWidget {
-  const ServoControlWidget({Key? key}) : super(key: key);
-
-  @override
-  _ServoControlWidgetState createState() => _ServoControlWidgetState();
-}
-
-class _ServoControlWidgetState extends State<ServoControlWidget> {
-  double servoPosition = 90; // Posição inicial do servo
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Controle do Servo",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueGrey[800],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Posição: ${servoPosition.toStringAsFixed(0)}°"),
-                Slider(
-                  value: servoPosition,
-                  min: 0,
-                  max: 180,
-                  divisions: 180,
-                  label: "${servoPosition.toStringAsFixed(0)}°",
                   onChanged: (value) {
                     setState(() {
-                      servoPosition = value;
+                      blue = value;
                     });
                   },
                 ),
-              ],
-            ),
+              ),
+            ],
           ],
         ),
       ),
@@ -262,111 +252,134 @@ class LcdControlWidget extends StatefulWidget {
   const LcdControlWidget({Key? key}) : super(key: key);
 
   @override
-  _LcdControlWidgetState createState() => _LcdControlWidgetState();
+  State<LcdControlWidget> createState() => _LcdControlWidgetState();
 }
 
 class _LcdControlWidgetState extends State<LcdControlWidget> {
-  bool isLcdOn = false;
-  TextEditingController messageController = TextEditingController();
-  String displayedMessage = "";
+  bool isLcdOn = false; // Estado do LCD (ligado/desligado)
+  int temperature = 24; // Temperatura padrão
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Controle do LCD"),
-        centerTitle: true,
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
       ),
-      body: Padding(
+      elevation: 3,
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Controle do LCD",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueGrey[800],
-              ),
-            ),
-            const SizedBox(height: 16),
+            // Header com botão de ligar/desligar
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "LCD",
-                  style: TextStyle(fontSize: 16),
+                CircleAvatar(
+                  backgroundColor:
+                      isLcdOn ? Colors.lightBlue[100] : Colors.grey[300],
+                  child: Icon(
+                    Icons.ac_unit, // Ícone de ar-condicionado
+                    color: isLcdOn ? Colors.blue : Colors.grey[700],
+                  ),
                 ),
+                const SizedBox(width: 10),
+                Text(
+                  "Ar-Condicionado",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isLcdOn ? Colors.blue : Colors.grey[700],
+                  ),
+                ),
+                const Spacer(),
                 Switch(
                   value: isLcdOn,
                   onChanged: (value) {
                     setState(() {
                       isLcdOn = value;
-                      if (!isLcdOn) {
-                        displayedMessage =
-                            ""; // Apaga a mensagem ao desligar o LCD
-                      }
                     });
                   },
+                  activeColor: Colors.blue,
+                  inactiveThumbColor: Colors.grey,
                 ),
               ],
             ),
             const SizedBox(height: 16),
+
+            // Corpo das funcionalidades
             if (isLcdOn) ...[
-              TextField(
-                controller: messageController,
-                maxLength: 32, // Limite de caracteres típico de um LCD
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Mensagem para o LCD",
-                  hintText: "Digite a mensagem aqui",
-                ),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    displayedMessage = messageController.text;
-                  });
-                },
-                child: const Text("Exibir Mensagem"),
+              // Ajuste de temperatura
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Temperatura:",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (temperature > 16) temperature--;
+                          });
+                        },
+                        icon: const Icon(Icons.remove_circle_outline),
+                      ),
+                      Text(
+                        "$temperature°C",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (temperature < 30) temperature++;
+                          });
+                        },
+                        icon: const Icon(Icons.add_circle_outline),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
-              Text(
-                "Mensagem no LCD:",
+              // Exibição do status no "LCD"
+              const Text(
+                "Status do LCD:",
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey[600],
                 ),
               ),
               const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.all(12),
                 width: double.infinity,
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey, width: 1),
                 ),
-                child: Text(
-                  displayedMessage,
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontFamily: "Courier",
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Temperatura: $temperature°C",
+                      style: const TextStyle(
+                        color: Colors.greenAccent,
+                        fontFamily: "Courier",
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ] else
-              const Center(
-                child: Text(
-                  "LCD está desligado",
-                  style: TextStyle(fontSize: 16, color: Colors.red),
-                ),
-              ),
+              // Quando desligado
+              const Center(),
           ],
         ),
       ),

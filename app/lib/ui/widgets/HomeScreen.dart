@@ -77,13 +77,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Minha Casa Inteligente'),
+        backgroundColor: Colors.deepPurple,
+        title: const Text('Minha Casa Inteligente',
+            style: TextStyle(fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             onPressed: () {
               // Ação para configurar rotinas
             },
-            icon: const Icon(Icons.settings),
+            icon: const Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -114,15 +119,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            atuadores: [
-              ActuatorControlWidget(actuatorName: 'LED', icon: Icons.lightbulb)
+            atuadores: const [
+              ActuatorControlWidget(
+                  actuatorName: 'Lâmpada', icon: Icons.lightbulb)
             ],
           ),
           const SizedBox(height: 16.0),
           RoomCard(
             roomName: 'Cozinha',
             icon: Icons.kitchen,
-            devices: [
+            devices: const [
               DeviceItem(
                 name: 'Umidade',
                 status: 'Aberto 100%',
@@ -144,11 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      ConfigurationScreen(roomName: 'Cozinha'),
+                      const ConfigurationScreen(roomName: 'Cozinha'),
                 ),
               );
             },
-            atuadores: [
+            atuadores: const [
               ActuatorControlWidget(
                 actuatorName: 'LED',
                 icon: Icons.lightbulb,
@@ -185,7 +191,9 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
             atuadores: [
-              ActuatorControlWidget(actuatorName: 'LED', icon: Icons.lightbulb)
+              ActuatorControlWidget(actuatorName: 'LED', icon: Icons.lightbulb),
+              LedRgbControlWidget(),
+              LcdControlWidget()
             ],
           ),
           RoomCard(
@@ -207,8 +215,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            atuadores: [
-              ActuatorControlWidget(actuatorName: 'LED', icon: Icons.lightbulb)
+            atuadores: const [
+              ActuatorControlWidget(
+                  actuatorName: 'Lâmpada', icon: Icons.lightbulb)
             ],
           ),
           const SizedBox(height: 20.0),

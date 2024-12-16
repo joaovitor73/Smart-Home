@@ -24,9 +24,11 @@ class RoomCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(15.0), // Feedback de toque
       child: Card(
         color: Colors.blueGrey[50], // Cor de fundo do card
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        elevation: 4,
+
+        margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0), // Bordas arredondadas
+          borderRadius: BorderRadius.circular(12.0),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -35,14 +37,12 @@ class RoomCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(icon, size: 32.0), // Ícone do card
+                  Icon(icon, size: 32), // Ícone do card
                   const SizedBox(width: 8.0),
                   Text(
                     roomName,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey[900], // Cor do texto
+                    style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w600, // Cor do texto
                     ),
                   ),
                 ],
