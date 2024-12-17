@@ -102,7 +102,6 @@ void asyncCB(AsyncResult &aResult) {
           startIdx = path.indexOf("/sensores/") + 10;  
           endIdx = path.indexOf("/", startIdx);  
           sensor = path.substring(startIdx, endIdx);
-          Serial.println(data);
           int valor = data.toInt();
           if(sensor != "luz" && sensor != "presenca" && sensor != "umidade" && sensor != "temperatura"){
                 if(sensor == "led_rgb"){
@@ -110,13 +109,10 @@ void asyncCB(AsyncResult &aResult) {
                   String value = path.substring(startIdx); 
                   if(value == "r"){
                     analogWrite(redLedRGB, valor);
-                    Serial.println("r");
                   }else if(value == "b"){
                       analogWrite(greenLedRGB, valor);
-                       Serial.println("g");
                   }else{
                       analogWrite(blueLedRGB, valor);
-                       Serial.println("b");
                   }
                 }else{
                     swhitchComfortable(comodo, valor, sensor);
