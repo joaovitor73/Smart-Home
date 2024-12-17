@@ -3,8 +3,10 @@ import 'package:app/services/shared_service.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GeoLocatorService {
-  String latitudeCasa = "-5.8950000";
-  String longitudeCasa = "-35.630000";
+  String latitudeCasaX1 = "-5.8950000";
+  String latitudeCasaX2 = "-5.8950000";
+  String longitudeCasaY1 = "-35.630000";
+  String longitudeCasaY2 = "-35.630000";
 
   Future<Position> determinePosition() async {
     bool serviceEnabled;
@@ -46,8 +48,10 @@ class GeoLocatorService {
     SharedService.salvarSensor('fora_casa', s);
 
     Position? position = await determinePosition();
-    if (position.latitude == latitudeCasa &&
-        position.longitude == longitudeCasa) {
+    if ((position.latitude >= double.parse(latitudeCasaX1) &&
+            position.latitude <= double.parse(latitudeCasaX2)) &&
+        (position.longitude >= double.parse(longitudeCasaY1) &&
+            position.longitude <= double.parse(longitudeCasaY2))) {
       SharedService.recuperarSensores('casa');
     } else {
       SharedService.recuperarSensores('fora_casa');
