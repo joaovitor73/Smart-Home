@@ -1,4 +1,3 @@
-import 'package:app/domain/Sensor.dart';
 import 'package:app/services/shared_service.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -34,19 +33,7 @@ class GeoLocatorService {
     return await Geolocator.getCurrentPosition();
   }
 
-  //definir maior igual para quando quiser que a localização fique em um local maior
-  // definir igual quando quiser o local exato
   Future<void> captureLocation() async {
-    Sensor s = Sensor(
-      comodo: 'sala',
-      nome: 'luz',
-      dados: {
-        'valor': 123123,
-      },
-    );
-
-    SharedService.salvarSensor('fora_casa', s);
-
     Position? position = await determinePosition();
     if ((position.latitude >= double.parse(latitudeCasaX1) &&
             position.latitude <= double.parse(latitudeCasaX2)) &&

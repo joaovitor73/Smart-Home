@@ -19,4 +19,16 @@ class RealtimeService {
       print('Erro ao atualizar: $error');
     }
   }
+
+  Future<void> updateAusencia({
+    required int estado,
+  }) async {
+    final databaseRef = FirebaseDatabase.instance.ref('smart_home/json');
+    try {
+      await databaseRef.update({'ausente': estado});
+      print('Atualização realizada com sucesso!');
+    } catch (error) {
+      print('Erro ao atualizar: $error');
+    }
+  }
 }
