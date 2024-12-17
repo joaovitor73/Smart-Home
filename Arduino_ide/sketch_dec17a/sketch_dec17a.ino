@@ -24,13 +24,12 @@ AsyncClient aClient(ssl_client, getNetwork(network));
 
 const byte ledSala = 2;
 const byte ledCozinha = 18;
-const byte ledQuarto = 19;
 const byte ledBanheiro = 21;
 const byte DHTPIN = 5;
 const byte redLedRGB = 25;
 const byte greenLedRGB = 33;
 const byte blueLedRGB = 32;
-const byte pinEn1 = 23;
+const byte pinEn1 = 19;
 const byte motorQuartoA1 = 4;
 const byte motorQuartoB1 = 15;
 
@@ -69,8 +68,7 @@ void setup() {
     Database.url(DATABASE_URL);
 
     pinMode(ledSala, OUTPUT); 
-    pinMode(ledCozinha, OUTPUT); 
-    pinMode(ledQuarto, OUTPUT); 
+    pinMode(ledCozinha, OUTPUT);  
     pinMode(ledBanheiro, OUTPUT);
     dht.begin();
     pinMode(redLedRGB, OUTPUT);
@@ -170,8 +168,6 @@ void updateQuarto(int valor, Sensor sensor, String tipoSensor, String nomeComodo
       digitalWrite(motorQuartoB1, LOW);
       break;
     case 5: 
-      break;
-    case 4: digitalWrite(ledQuarto, valor);
       break;
   }
 }
