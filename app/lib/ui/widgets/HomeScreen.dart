@@ -1,4 +1,7 @@
-import 'package:app/services/geolocator_service.dart';
+import 'dart:convert';
+
+import 'package:app/domain/Sensor.dart';
+import 'package:app/services/shared_service.dart';
 import 'package:app/ui/widgets/AtuadoresItem.dart';
 import 'package:app/ui/widgets/ConfigureScreen.dart';
 import 'package:app/ui/widgets/DeviceItem.dart';
@@ -7,75 +10,34 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   final databaseRef = FirebaseDatabase.instance.ref();
+  List<Sensor> sensors = [];
   String livingRoomLight = "Carregando...";
-  String livingRoomTemperature = "Carregando...";
-  String livingRoomHumidity = "Carregando...";
-  String fetchedTemperature = "Carregando temperatura...";
-  String fetchedHumidity = "Carregando umidade...";
-  String fetchedLight = "Carregando luz...";
-
+  String banheirotemp = "Carregando...";
+  String banheiroLuz = "Carregando...";
+  String cozinhaHumidade = "Carregando...";
+  String cozinhaTemp = "Carregando...";
+  String salaPresenca = "Carregando...";
+  String cozinhaLuz = "Carregando...";
+  String quartoUmidade = "Carregando...";
+  String quartoTemp = "Carregando...";
+  String quartoLuz = "Carregando...";
   final TextEditingController _lightController = TextEditingController();
-
-  late GeoLocatorService geoLocatorService;
+  final TextEditingController _comodoController = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _dadosController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    geoLocatorService = Provider.of<GeoLocatorService>(context, listen: false);
-    geoLocatorService.captureLocation();
-    fetchSensorData("sala", "temperatura", (data) {
-      setState(() {
-        fetchedTemperature = data.toString();
-      });
-    });
-    fetchSensorData("sala", "umidade", (data) {
-      setState(() {
-        fetchedHumidity = data.toString();
-      });
-    });
-    fetchSensorData("sala", "luz", (data) {
-      setState(() {
-        fetchedLight = data.toString();
-      });
-    });
-  }
-
-  void fetchSensorData(
-      String comodo, String sensor, Function(dynamic) onDataReceived) {
-    databaseRef
-        .child("smart_home")
-        .child("json")
-        .child("comodos")
-        .child(comodo)
-        .child("sensores")
-        .child(sensor)
-        .onValue
-        .listen((event) {
-      final data = event.snapshot.value;
-      onDataReceived(data);
-    });
-  }
-
-  void updateSensorValue(String comodo, String sensor, String newValue) {
-    databaseRef
-        .child("smart_home")
-        .child("json")
-        .child("comodos")
-        .child(comodo)
-        .child("sensores")
-        .child(sensor)
-        .set(newValue);
+    listenToRealtimeChanges();
   }
 
   void listenToRealtimeChanges() {
@@ -90,22 +52,76 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     databaseRef
-        .child("smart_home/json/comodos/sala/sensores/temperatura")
+        .child("smart_home/json/comodos/cozinha/sensores/temperatura/valor")
         .onValue
         .listen((event) {
       final data = event.snapshot.value;
       setState(() {
-        livingRoomTemperature = data.toString();
+        cozinhaTemp = data != null ? data.toString() : "N/A";
+      });
+    });
+    databaseRef
+        .child("smart_home/json/comodos/cozinha/sensores/umidade/valor")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        cozinhaHumidade = data != null ? data.toString() : "N/A";
+      });
+    });
+    databaseRef
+        .child("smart_home/json/comodos/cozinha/sensores/luz/valor")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        cozinhaLuz = data != null ? data.toString() : "N/A";
       });
     });
 
     databaseRef
-        .child("smart_home/json/comodos/sala/sensores/umidade")
+        .child("smart_home/json/comodos/sala/sensores/presença/valor")
         .onValue
         .listen((event) {
       final data = event.snapshot.value;
       setState(() {
-        livingRoomHumidity = data.toString();
+        cozinhaHumidade = data != null ? data.toString() : "N/A";
+      });
+    });
+    databaseRef
+        .child("smart_home/json/comodos/banheiro/sensores/luz/valor")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        banheiroLuz = data != null ? data.toString() : "N/A";
+      });
+    });
+    databaseRef
+        .child("smart_home/json/comodos/quarto/sensores/umidade/valor")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        quartoUmidade = data != null ? data.toString() : "N/A";
+      });
+    });
+    databaseRef
+        .child("smart_home/json/comodos/quarto/sensores/temperatura/valor")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        quartoTemp = data != null ? data.toString() : "N/A";
+      });
+    });
+    databaseRef
+        .child("smart_home/json/comodos/quarto/sensores/luz/valor")
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value;
+      setState(() {
+        quartoLuz = data != null ? data.toString() : "N/A";
       });
     });
   }
@@ -138,12 +154,12 @@ class _HomeScreenState extends State<HomeScreen> {
             devices: [
               DeviceItem(
                 name: 'Luz',
-                status: fetchedLight,
+                status: livingRoomLight,
                 icon: Icons.light,
               ),
               DeviceItem(
                 name: 'Presença',
-                status: livingRoomTemperature,
+                status: salaPresenca,
                 icon: Icons.priority_high_rounded,
               ),
             ],
@@ -158,7 +174,15 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             atuadores: const [
               ActuatorControlWidget(
-                  actuatorName: 'Lâmpada', icon: Icons.lightbulb)
+                actuatorName: 'luz',
+                icon: Icons.lightbulb,
+                comodo: "sala",
+              ),
+              ActuatorControlWidget(
+                actuatorName: 'led',
+                icon: Icons.lightbulb,
+                comodo: "sala",
+              )
             ],
           ),
           const SizedBox(height: 16.0),
@@ -168,17 +192,17 @@ class _HomeScreenState extends State<HomeScreen> {
             devices: [
               DeviceItem(
                 name: 'Umidade',
-                status: fetchedHumidity,
+                status: cozinhaHumidade,
                 icon: Icons.water_drop,
               ),
               DeviceItem(
                 name: 'Luz',
-                status: fetchedLight,
+                status: cozinhaLuz,
                 icon: Icons.light,
               ),
-              const DeviceItem(
+              DeviceItem(
                 name: 'Temperatura',
-                status: 'Fechado',
+                status: cozinhaTemp,
                 icon: Icons.thermostat,
               ),
             ],
@@ -191,31 +215,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            atuadores: const [
+            atuadores: [
               ActuatorControlWidget(
-                actuatorName: 'LED',
-                icon: Icons.lightbulb,
-              )
+                  actuatorName: 'luz', icon: Icons.lightbulb, comodo: "cozinha")
             ],
           ),
           const SizedBox(height: 16.0),
           RoomCard(
             icon: Icons.bedroom_parent,
             roomName: 'Quarto',
-            devices: const [
+            devices: [
               DeviceItem(
                 name: 'Umidade',
-                status: 'Aberto 100%',
+                status: quartoUmidade,
                 icon: Icons.water_drop,
               ),
               DeviceItem(
                 name: 'Temperatura',
-                status: 'Fechado',
+                status: quartoTemp,
                 icon: Icons.thermostat,
               ),
               DeviceItem(
                 name: 'Luz',
-                status: 'N/A',
+                status: quartoLuz,
                 icon: Icons.light,
               ),
             ],
@@ -223,24 +245,26 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      const ConfigurationScreen(roomName: 'Quarto'),
+                  builder: (context) => ConfigurationScreen(roomName: 'Quarto'),
                 ),
               );
             },
-            atuadores: const [
-              ActuatorControlWidget(actuatorName: 'LED', icon: Icons.lightbulb),
-              LedRgbControlWidget(),
-              LcdControlWidget()
+            atuadores: [
+              ActuatorControlWidget(
+                actuatorName: 'luz',
+                icon: Icons.lightbulb,
+                comodo: "quarto",
+              ),
+              LedRgbControlWidget()
             ],
           ),
           RoomCard(
             icon: Icons.bathtub,
             roomName: 'Banheiro',
-            devices: const [
+            devices: [
               DeviceItem(
                 name: 'Luz',
-                status: 'Aberto 100%',
+                status: banheiroLuz,
                 icon: Icons.light,
               ),
             ],
@@ -249,25 +273,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      const ConfigurationScreen(roomName: 'Banheiro'),
+                      ConfigurationScreen(roomName: 'Banheiro'),
                 ),
               );
             },
-            atuadores: const [
+            atuadores: [
               ActuatorControlWidget(
-                  actuatorName: 'Lâmpada', icon: Icons.lightbulb)
+                actuatorName: 'Lâmpada',
+                icon: Icons.lightbulb,
+                comodo: "banheiro",
+              )
             ],
           ),
-          const SizedBox(height: 20.0),
-          TextField(
-            controller: _lightController,
-            decoration: const InputDecoration(
-              labelText: "Novo valor para Luz",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 20.0),
         ],
       ),
     );

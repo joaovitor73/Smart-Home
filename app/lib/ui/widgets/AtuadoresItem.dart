@@ -1,13 +1,18 @@
+import 'package:app/domain/Sensor.dart';
+import 'package:app/services/realtime_service.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class ActuatorControlWidget extends StatefulWidget {
   final String actuatorName; // Nome do atuador (ex.: "Luz", "Motor")
   final IconData icon; // Ícone a ser exibido
+  final String comodo;
 
   const ActuatorControlWidget({
     super.key,
     required this.actuatorName,
     required this.icon,
+    required this.comodo,
   });
 
   @override
@@ -16,7 +21,8 @@ class ActuatorControlWidget extends StatefulWidget {
 
 class _ActuatorControlWidgetState extends State<ActuatorControlWidget> {
   bool isOn = false; // Estado do atuador (ligado/desligado)
-  double power = 0; // Potência inicial do atuador (0-100%)
+  double power = 0;
+  RealtimeService realtimeService = RealtimeService();
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,20 @@ class _ActuatorControlWidgetState extends State<ActuatorControlWidget> {
                     setState(() {
                       isOn = value;
                       if (!isOn) {
-                        power = 0; // Zera a potência ao desligar
+                        power = 0;
+                        realtimeService.updateData(
+                            sensor: Sensor(
+                                comodo: widget.comodo.toString(),
+                                nome: widget.actuatorName,
+                                dados: {
+                              "valor": power
+                            })); // Zera a potência ao desligar
+                      } else {
+                        realtimeService.updateData(
+                            sensor: Sensor(
+                                comodo: widget.comodo.toString(),
+                                nome: widget.actuatorName,
+                                dados: {"valor": power}));
                       }
                     });
                   },
@@ -97,6 +116,11 @@ class _ActuatorControlWidgetState extends State<ActuatorControlWidget> {
                   onChanged: (value) {
                     setState(() {
                       power = value;
+                      realtimeService.updateData(
+                          sensor: Sensor(
+                              comodo: widget.comodo.toString(),
+                              nome: widget.actuatorName,
+                              dados: {"valor": power}));
                     });
                   },
                 ),
