@@ -5,6 +5,8 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
+#define RXD2 16 // GPIO 16 como RX do ESP32
+#define TXD2 17 // GPIO 17 como TX do ESP32
 #define WIFI_SSID "A"
 #define WIFI_PASSWORD "12345678"
 #define API_KEY "AIzaSyB2hyLRaBR3ZVqmnHYkvXN1IvZV_NJusFc"
@@ -57,11 +59,13 @@ enum Sensor{
   LCD,
   MOTOR,
   DISTANCIA,
-  LED_RGB
+  LED_RGB,
+  SERVO
 };
 
 void setup(){
     Serial.begin(115200);
+    Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2); 
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -126,6 +130,7 @@ void getDados(){
   String jsonData = Database.get<String>(aClient, "/smart_home/json");
   if (aClient.lastError().code() == 0) {
     DynamicJsonDocument doc(2048);
+    Serial.println("chegou json");
     DeserializationError error = deserializeJson(doc, jsonData);
     if (error) {
     }
@@ -191,6 +196,14 @@ void updateCozinha(int valor, Sensor sensor, int id, const char* tipoSensor, con
 
 void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, const char* nomeComodo){
    switch(sensor){
+    case 9:
+      if (Serial2.available()) {
+        Serial2.print(valor);
+        Serial2.write(valor);
+        Serial.print("servo: ");
+        Serial.println(valor);
+     }  
+      break;
     case 8:
     break;
     case 7: 
@@ -201,15 +214,22 @@ void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, cons
       digitalWrite(motorQuartoB1, LOW);
       break;
     case 5: 
+      //  if (Serial3.available()) {
+      //   Serial3.write(valor);
+      // }
+     Serial.print("lcd: ");
+     Serial.println(valor);
       break;
     case 4: digitalWrite(ledQuarto, valor);
       break;
     case 3: pushData(tipoSensor, id, dht.readTemperature() , nomeComodo);
+            Serial.println(dht.readTemperature());
       break;
     case 2: ldrValue = map(analogRead(LDR_PIN), 0, 4095, 0, 255);
             pushData(tipoSensor, id, ldrValue , nomeComodo);
       break;
     case 1: pushData(tipoSensor, id, dht.readHumidity() , nomeComodo);
+            Serial.println(dht.readHumidity());
       break;
   }
 }
@@ -220,12 +240,12 @@ void updateSala(int valor, Sensor sensor, int id, const char* tipoSensor, const 
       break;
     case 2: ldrValue = map(analogRead(LDR_PIN), 0, 4095, 0, 255);
             pushData(tipoSensor, id, ldrValue , nomeComodo);
+            Serial.println(ldrValue);
       break;
     case 0: pushData(tipoSensor, id, digitalRead(pinoPIR), nomeComodo);
       break;
   }
 }
-
 
 void pushData(const char* tipoSensor, int id, int valor, const char* nomeComodo){
   String caminho = String("/smart_home/json/comodos/") + nomeComodo + "/sensores/" + tipoSensor + "/valor";
@@ -248,9 +268,9 @@ Sensor getSensoresEnum(const char* sensor){
   if(strcmp(sensor, "lcd") == 0) return LCD;
   if(strcmp(sensor, "luz") == 0) return LUZ;
   if(strcmp(sensor, "temperatura") == 0) return TEMPERATURA;
-  if(strcmp(sensor, "led_rgb")) return LED_RGB;
+  if(strcmp(sensor, "led_rgb") == 0) return LED_RGB;
+  if(strcmp(sensor, "servo")== 0) return SERVO;    
 }
-
 
 
 
