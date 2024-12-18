@@ -179,6 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late GeoLocatorService geoLocatorService;
   late RealtimeService realtimeService;
+
   @override
   void initState() {
     super.initState();
