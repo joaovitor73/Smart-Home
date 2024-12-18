@@ -130,20 +130,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: const Text('Minha Casa Inteligente',
+        backgroundColor: Color.fromARGB(255, 12, 182, 255),
+        title: const Text('Smart Home',
             style: TextStyle(fontWeight: FontWeight.w600)),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Ação para configurar rotinas
-            },
-            icon: const Icon(
-              Icons.settings,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),

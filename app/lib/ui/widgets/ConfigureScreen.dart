@@ -20,7 +20,7 @@ class ConfigurationScreenState extends State<ConfigurationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Rotinas Automatizadas"),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color.fromARGB(255, 12, 182, 255),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
