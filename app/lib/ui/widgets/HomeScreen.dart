@@ -156,17 +156,20 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      const ConfigurationScreen(roomName: 'Sala'),
+                  builder: (context) => const ConfigurationScreen(
+                    roomName: 'Sala',
+                    atuadores: [
+                      ActuatorControlWidget(
+                        actuatorName: 'led',
+                        icon: Icons.lightbulb,
+                        comodo: "sala",
+                      )
+                    ],
+                  ),
                 ),
               );
             },
             atuadores: const [
-              ActuatorControlWidget(
-                actuatorName: 'luz',
-                icon: Icons.lightbulb,
-                comodo: "sala",
-              ),
               ActuatorControlWidget(
                 actuatorName: 'led',
                 icon: Icons.lightbulb,
@@ -199,14 +202,20 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      const ConfigurationScreen(roomName: 'Cozinha'),
+                  builder: (context) => const ConfigurationScreen(
+                      roomName: 'Cozinha',
+                      atuadores: [
+                        ActuatorControlWidget(
+                            actuatorName: 'led',
+                            icon: Icons.lightbulb,
+                            comodo: "cozinha")
+                      ]),
                 ),
               );
             },
             atuadores: [
               ActuatorControlWidget(
-                  actuatorName: 'luz', icon: Icons.lightbulb, comodo: "cozinha")
+                  actuatorName: 'led', icon: Icons.lightbulb, comodo: "cozinha")
             ],
           ),
           const SizedBox(height: 16.0),
@@ -230,22 +239,42 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.light,
               ),
             ],
+            atuadores: [
+              ActuatorControlWidget(
+                actuatorName: 'led',
+                icon: Icons.lightbulb,
+                comodo: "quarto",
+              ),
+              LedRgbControlWidget(),
+              ActuatorControlWidget(
+                  actuatorName: 'motor',
+                  icon: Icons.settings,
+                  comodo: "quarto"),
+              LcdControlWidget()
+            ],
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ConfigurationScreen(roomName: 'Quarto'),
+                  builder: (context) => ConfigurationScreen(
+                    roomName: 'Quarto',
+                    atuadores: [
+                      ActuatorControlWidget(
+                        actuatorName: 'led',
+                        icon: Icons.lightbulb,
+                        comodo: "quarto",
+                      ),
+                      LedRgbControlWidget(),
+                      ActuatorControlWidget(
+                          actuatorName: 'motor',
+                          icon: Icons.settings,
+                          comodo: "quarto"),
+                      LcdControlWidget()
+                    ],
+                  ),
                 ),
               );
             },
-            atuadores: [
-              ActuatorControlWidget(
-                actuatorName: 'luz',
-                icon: Icons.lightbulb,
-                comodo: "quarto",
-              ),
-              LedRgbControlWidget()
-            ],
           ),
           RoomCard(
             icon: Icons.bathtub,
@@ -261,14 +290,22 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      ConfigurationScreen(roomName: 'Banheiro'),
+                  builder: (context) => const ConfigurationScreen(
+                    roomName: 'Banheiro',
+                    atuadores: [
+                      ActuatorControlWidget(
+                        actuatorName: 'led',
+                        icon: Icons.lightbulb,
+                        comodo: "banheiro",
+                      )
+                    ],
+                  ),
                 ),
               );
             },
             atuadores: [
               ActuatorControlWidget(
-                actuatorName: 'Lâmpada',
+                actuatorName: 'led',
                 icon: Icons.lightbulb,
                 comodo: "banheiro",
               )

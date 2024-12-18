@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ConfigurationScreen extends StatefulWidget {
-  const ConfigurationScreen({super.key, required this.roomName});
+  const ConfigurationScreen(
+      {super.key, required this.roomName, required this.atuadores});
   final String roomName;
+  final List<dynamic> atuadores;
   @override
   ConfigurationScreenState createState() => ConfigurationScreenState();
 }
@@ -15,11 +17,12 @@ class ConfigurationScreenState extends State<ConfigurationScreen> {
   bool isAbsentRoutineLightOff = false;
   bool isAbsentRoutineCurtainClosed = false;
   bool isAbsentRoutineAirConditionerOff = false;
+  Rea
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Rotinas Automatizadas"),
+        title: Text("Ajuste de Rotinas  ${widget.roomName}"),
         backgroundColor: Color.fromARGB(255, 12, 182, 255),
       ),
       body: Padding(

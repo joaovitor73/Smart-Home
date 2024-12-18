@@ -145,6 +145,8 @@ class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
   double red = 0;
   double green = 0;
   double blue = 0;
+  String comodo = "quarto";
+  RealtimeService realtimeService = RealtimeService();
 
   @override
   Widget build(BuildContext context) {
@@ -186,6 +188,11 @@ class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
                       isRgbOn = value;
                       if (!isRgbOn) {
                         red = green = blue = 0; // Zera os valores ao desligar
+                        realtimeService.updateData(
+                            sensor: Sensor(
+                                comodo: comodo,
+                                nome: "led_rgb",
+                                dados: {"r": red, "g": green, "b": blue}));
                       }
                     });
                   },
@@ -197,7 +204,7 @@ class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
             if (isRgbOn) ...[
               const SizedBox(height: 16),
               Text(
-                "RGB: R${red.toInt()} G${green.toInt()} B${blue.toInt()}",
+                "RGB: R: ${red.toInt()} G: ${green.toInt()} B: ${blue.toInt()}",
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey.shade700,
@@ -216,10 +223,15 @@ class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
                   min: 0,
                   max: 255,
                   divisions: 255,
-                  label: "R: ${red.toInt()}",
+                  label: "R:  ${red.toInt()}",
                   onChanged: (value) {
                     setState(() {
                       red = value;
+                      realtimeService.updateData(
+                          sensor: Sensor(
+                              comodo: comodo,
+                              nome: "led_rgb",
+                              dados: {"r": red, "g": green, "b": blue}));
                     });
                   },
                 ),
@@ -236,10 +248,15 @@ class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
                   min: 0,
                   max: 255,
                   divisions: 255,
-                  label: "G: ${green.toInt()}",
+                  label: "G:  ${green.toInt()}",
                   onChanged: (value) {
                     setState(() {
                       green = value;
+                      realtimeService.updateData(
+                          sensor: Sensor(
+                              comodo: comodo,
+                              nome: "led_rgb",
+                              dados: {"r": red, "g": green, "b": blue}));
                     });
                   },
                 ),
@@ -256,10 +273,15 @@ class _LedRgbControlWidgetState extends State<LedRgbControlWidget> {
                   min: 0,
                   max: 255,
                   divisions: 255,
-                  label: "B: ${blue.toInt()}",
+                  label: "B:  ${blue.toInt()}",
                   onChanged: (value) {
                     setState(() {
                       blue = value;
+                      realtimeService.updateData(
+                          sensor: Sensor(
+                              comodo: comodo,
+                              nome: "led_rgb",
+                              dados: {"r": red, "g": green, "b": blue}));
                     });
                   },
                 ),
@@ -282,6 +304,8 @@ class LcdControlWidget extends StatefulWidget {
 class _LcdControlWidgetState extends State<LcdControlWidget> {
   bool isLcdOn = false; // Estado do LCD (ligado/desligado)
   int temperature = 24; // Temperatura padrão
+  String comodo = "quarto";
+  RealtimeService realtimeService = RealtimeService();
 
   @override
   Widget build(BuildContext context) {
@@ -321,6 +345,11 @@ class _LcdControlWidgetState extends State<LcdControlWidget> {
                   onChanged: (value) {
                     setState(() {
                       isLcdOn = value;
+                      realtimeService.updateData(
+                          sensor: Sensor(comodo: comodo, nome: "lcd", dados: {
+                        "valor": isLcdOn,
+                        "msg": "Temperatura: $temperature°C"
+                      })); // Atualiza o estado
                     });
                   },
                   activeColor: Colors.blue,
@@ -346,6 +375,14 @@ class _LcdControlWidgetState extends State<LcdControlWidget> {
                         onPressed: () {
                           setState(() {
                             if (temperature > 16) temperature--;
+                            realtimeService.updateData(
+                                sensor: Sensor(
+                                    comodo: comodo,
+                                    nome: "lcd",
+                                    dados: {
+                                  "valor": isLcdOn,
+                                  "msg": "Temperatura: $temperature°C"
+                                }));
                           });
                         },
                         icon: const Icon(Icons.remove_circle_outline),
@@ -361,6 +398,14 @@ class _LcdControlWidgetState extends State<LcdControlWidget> {
                         onPressed: () {
                           setState(() {
                             if (temperature < 30) temperature++;
+                            realtimeService.updateData(
+                                sensor: Sensor(
+                                    comodo: comodo,
+                                    nome: "lcd",
+                                    dados: {
+                                  "valor": isLcdOn,
+                                  "msg": "Temperatura: $temperature°C"
+                                }));
                           });
                         },
                         icon: const Icon(Icons.add_circle_outline),
