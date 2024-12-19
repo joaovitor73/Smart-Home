@@ -20,6 +20,12 @@ class NotificationService {
 
   Future<void> initializePermissition() async {
     requestPermission();
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
 
   Future<void> _firebaseMessagingBackgroundHandler(

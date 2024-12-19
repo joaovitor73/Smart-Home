@@ -11,7 +11,7 @@ class ConfigureProviders {
 
   static Future<ConfigureProviders> createDependencyTree() async {
     final realtime_service = RealtimeService();
-    final notification_service = NotificationService(topic: "alert");
+    final notification_service = NotificationService(topic: "alerta");
     final geolocator_service = GeoLocatorService();
 
     return ConfigureProviders(providers: [
