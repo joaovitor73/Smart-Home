@@ -1,3 +1,5 @@
+import 'package:app/domain/Sensor.dart';
+import 'package:app/services/realtime_service.dart';
 import 'package:flutter/material.dart';
 
 class ConfigurationScreen extends StatefulWidget {
@@ -17,7 +19,6 @@ class ConfigurationScreenState extends State<ConfigurationScreen> {
   bool isAbsentRoutineLightOff = false;
   bool isAbsentRoutineCurtainClosed = false;
   bool isAbsentRoutineAirConditionerOff = false;
-  Rea
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +34,7 @@ class ConfigurationScreenState extends State<ConfigurationScreen> {
               "Rotina 1: Quando presente",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+            ...widget.atuadores,
             SwitchListTile(
               title: const Text("Luz: Ligar"),
               value: isPresentRoutineLightOn,

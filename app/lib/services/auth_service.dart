@@ -25,6 +25,19 @@ class AuthService {
     }
   }
 
+  Future<void> authenticateAdmin() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: "adm@gmail.com",
+        password: "admin123",
+      );
+      print("Autenticação bem-sucedida!");
+    } catch (e) {
+      print("Erro ao autenticar: $e");
+      throw Exception("Falha na autenticação. Verifique as credenciais.");
+    }
+  }
+
   Future<void> resetPassword(String email) async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);

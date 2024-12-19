@@ -1,8 +1,9 @@
-import 'package:app/ui/widgets/HomeScreen.dart';
 import 'package:app/core/configure_providers.dart';
 import 'package:app/domain/Sensor.dart';
 import 'package:app/services/geolocator_service.dart';
 import 'package:app/services/realtime_service.dart';
+import 'package:app/ui/pages/HomeScreen.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';

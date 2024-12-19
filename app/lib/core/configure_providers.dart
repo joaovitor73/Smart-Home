@@ -1,3 +1,4 @@
+import 'package:app/services/auth_service.dart';
 import 'package:app/services/geolocator_service.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/realtime_service.dart';
@@ -13,11 +14,13 @@ class ConfigureProviders {
     final realtime_service = RealtimeService();
     final notification_service = NotificationService(topic: "alert");
     final geolocator_service = GeoLocatorService();
+    final auth_service = AuthService();
 
     return ConfigureProviders(providers: [
       Provider<RealtimeService>.value(value: realtime_service),
       Provider<NotificationService>.value(value: notification_service),
       Provider<GeoLocatorService>.value(value: geolocator_service),
+      Provider<AuthService>.value(value: auth_service)
     ]);
   }
 }
