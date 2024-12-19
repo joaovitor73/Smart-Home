@@ -1,3 +1,4 @@
+import 'package:app/services/sensorService.dart';
 import 'package:app/services/geolocator_service.dart';
 import 'package:app/services/notification_service.dart';
 import 'package:app/services/realtime_service.dart';
@@ -18,6 +19,7 @@ class ConfigureProviders {
       Provider<RealtimeService>.value(value: realtime_service),
       Provider<NotificationService>.value(value: notification_service),
       Provider<GeoLocatorService>.value(value: geolocator_service),
+      ChangeNotifierProvider(create: (_) => SensorDataProvider()),
     ]);
   }
 }
