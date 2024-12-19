@@ -1,3 +1,4 @@
+import 'package:app/ui/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -20,7 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(Icons.menu, color: Colors.white),
           iconSize: 28,
           onPressed: () {
-            Scaffold.of(context).openDrawer();
+            Scaffold.of(context).openDrawer(); // Abre o Drawer
           },
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:app/ui/widgets/ausente_widget.dart';
+import 'package:app/ui/widgets/custom_app_bar.dart';
+import 'package:app/ui/widgets/drawer.dart';
 import 'package:app/ui/widgets/room_info.dart';
 import 'package:app/ui/widgets/sensor_box.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _currentScreen = 'Home';
 
-  void _selectScreen(String screen) {
+  void onSelectScreen(String screen) {
     setState(() {
       _currentScreen = screen;
     });
@@ -20,12 +22,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home Page")),
+      appBar: CustomAppBar(),
+      drawer: AppDrawer(
+        currentScreen: _currentScreen,
+        onSelectScreen: onSelectScreen,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Ausente(),
-            RoomInfo(roomName: 'Sala 1', icon: Icons.weekend),
+            RoomInfo(roomName: 'Sala', icon: Icons.weekend),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
