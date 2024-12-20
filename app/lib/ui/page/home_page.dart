@@ -1,9 +1,11 @@
+import 'package:app/services/sensorService.dart';
 import 'package:app/ui/widgets/ausente_widget.dart';
 import 'package:app/ui/widgets/custom_app_bar.dart';
 import 'package:app/ui/widgets/drawer.dart';
 import 'package:app/ui/widgets/room_info.dart';
 import 'package:app/ui/widgets/sensor_box.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,6 +18,27 @@ class _HomePageState extends State<HomePage> {
   void onSelectScreen(String screen) {
     setState(() {
       _currentScreen = screen;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Garantir que a lógica de inicialização seja feita após a primeira renderização
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Aqui o context já está totalmente vinculado ao widget tree
+      final sensorDataProvider =
+          Provider.of<SensorDataProvider>(context, listen: false);
+
+      final sensors = [
+        {"comodo": "sala", "sensor": "luz"},
+        {"comodo": "cozinha", "sensor": "temperatura"},
+      ];
+
+      for (var sensor in sensors) {
+        sensorDataProvider.fetchSensorData(
+            sensor['comodo']!, sensor['sensor']!);
+      }
     });
   }
 
