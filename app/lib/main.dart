@@ -12,9 +12,7 @@ Future<void> main() async {
   await authenticateAdmin();
   runApp(
     MultiProvider(
-      providers: [
-        Provider.value(value: configureProviders),
-      ],
+      providers: configureProviders.providers,
       child: MyApp(),
     ),
   );
@@ -34,7 +32,7 @@ Future<void> authenticateAdmin() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp();
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -24,15 +24,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Garantir que a lógica de inicialização seja feita após a primeira renderização
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Aqui o context já está totalmente vinculado ao widget tree
       final sensorDataProvider =
           Provider.of<SensorDataProvider>(context, listen: false);
 
       final sensors = [
         {"comodo": "sala", "sensor": "luz"},
-        {"comodo": "cozinha", "sensor": "temperatura"},
+        {"comodo": "sala", "sensor": "led"},
+        {"comodo": "sala", "sensor": "presenca"},
       ];
 
       for (var sensor in sensors) {
@@ -44,6 +43,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final sensorDataProvider = Provider.of<SensorDataProvider>(context);
+
     return Scaffold(
       appBar: CustomAppBar(),
       drawer: AppDrawer(
@@ -65,26 +66,35 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SensorBox(
-                            sensorName: 'LED',
-                            icon: Icons.lightbulb,
-                            iconColor: Colors.yellow,
-                            value: '75%'),
+                          sensorName: 'LED',
+                          icon: Icons.lightbulb,
+                          iconColor: Colors.yellow,
+                          value: sensorDataProvider.fetchedData['sala/led']
+                                  ?.toString() ??
+                              "Loading...",
+                        ),
                         SizedBox(height: 10),
                         SensorBox(
-                            sensorName: 'Luz',
-                            icon: Icons.wb_sunny,
-                            iconColor: Color.fromARGB(255, 255, 136, 1),
-                            value: '350 lux'),
+                          sensorName: 'Luz',
+                          icon: Icons.wb_sunny,
+                          iconColor: Color.fromARGB(255, 255, 136, 1),
+                          value: sensorDataProvider.fetchedData['sala/luz']
+                                  ?.toString() ??
+                              "Loading...",
+                        ),
                       ],
                     ),
                   ),
                   SizedBox(width: 20),
                   Expanded(
                     child: SensorBox(
-                        sensorName: 'Presença',
-                        icon: Icons.access_alarm,
-                        iconColor: Colors.blue,
-                        value: 'Ativo'),
+                      sensorName: 'Presença',
+                      icon: Icons.access_alarm,
+                      iconColor: Colors.blue,
+                      value: sensorDataProvider.fetchedData['sala/presenca']
+                              ?.toString() ??
+                          "Loading...",
+                    ),
                   ),
                 ],
               ),

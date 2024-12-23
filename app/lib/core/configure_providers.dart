@@ -14,12 +14,13 @@ class ConfigureProviders {
     final realtime_service = RealtimeService();
     final notification_service = NotificationService(topic: "alerta");
     final geolocator_service = GeoLocatorService();
+    final SensorDataProvider sensor_service = SensorDataProvider();
 
     return ConfigureProviders(providers: [
       Provider<RealtimeService>.value(value: realtime_service),
       Provider<NotificationService>.value(value: notification_service),
       Provider<GeoLocatorService>.value(value: geolocator_service),
-      ChangeNotifierProvider(create: (_) => SensorDataProvider()),
+      ChangeNotifierProvider<SensorDataProvider>.value(value: sensor_service),
     ]);
   }
 }
