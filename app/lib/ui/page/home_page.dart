@@ -1,3 +1,4 @@
+import 'package:app/services/realtime_service.dart';
 import 'package:app/services/sensorService.dart';
 import 'package:app/ui/widgets/ausente_widget.dart';
 import 'package:app/ui/widgets/custom_app_bar.dart';
@@ -44,7 +45,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final sensorDataProvider = Provider.of<SensorDataProvider>(context);
+    final realTimerProvider = Provider.of<RealtimeService>(context);
 
+    realTimerProvider.modoCabare();
     return Scaffold(
       appBar: CustomAppBar(),
       drawer: AppDrawer(
@@ -97,6 +100,20 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            SizedBox(height: 15),
+            RoomInfo(roomName: 'Quarto', icon: Icons.bed),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton.icon(
+                onPressed: realTimerProvider.modoCabare,
+                icon: Icon(Icons.flash_on, color: Colors.white),
+                label: Text("Ativar Modo Cabaré"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                ),
               ),
             ),
           ],
