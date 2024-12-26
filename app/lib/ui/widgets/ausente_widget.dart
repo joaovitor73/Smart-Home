@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Ausente extends StatelessWidget {
+  final String isAusente;
+
+  Ausente({required this.isAusente});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -14,7 +18,7 @@ class Ausente extends StatelessWidget {
             border: Border.all(color: Colors.grey),
           ),
           child: Text(
-            'Ausente',
+            isAusente,
             style: TextStyle(
               fontSize: 14,
               color: Colors.black,

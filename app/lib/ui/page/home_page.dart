@@ -1,3 +1,4 @@
+import 'package:app/services/geolocator_service.dart';
 import 'package:app/services/realtime_service.dart';
 import 'package:app/services/sensorService.dart';
 import 'package:app/ui/widgets/ausente_widget.dart';
@@ -46,6 +47,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final sensorDataProvider = Provider.of<SensorDataProvider>(context);
     final realTimerProvider = Provider.of<RealtimeService>(context);
+    final geolocatorProvider =
+        Provider.of<GeoLocatorService>(context, listen: true);
 
     realTimerProvider.modoCabare();
     return Scaffold(
@@ -57,7 +60,7 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Ausente(),
+            Ausente(isAusente: geolocatorProvider.isPresent),
             RoomInfo(roomName: 'Sala', icon: Icons.weekend),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),

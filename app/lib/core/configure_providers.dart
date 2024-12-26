@@ -19,7 +19,8 @@ class ConfigureProviders {
     return ConfigureProviders(providers: [
       Provider<RealtimeService>.value(value: realtime_service),
       Provider<NotificationService>.value(value: notification_service),
-      Provider<GeoLocatorService>.value(value: geolocator_service),
+      ChangeNotifierProvider<GeoLocatorService>.value(
+          value: geolocator_service),
       ChangeNotifierProvider<SensorDataProvider>.value(value: sensor_service),
     ]);
   }
