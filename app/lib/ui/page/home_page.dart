@@ -34,6 +34,20 @@ class _HomePageState extends State<HomePage> {
         {"comodo": "sala", "sensor": "luz"},
         {"comodo": "sala", "sensor": "led"},
         {"comodo": "sala", "sensor": "presenca"},
+        {"comodo": "banheiro", "sensor": "luz"},
+        {"comodo": "banheiro", "sensor": "led"},
+        {"comodo": "cozinha", "sensor": "umidade"},
+        {"comodo": "cozinha", "sensor": "luz"},
+        {"comodo": "cozinha", "sensor": "temperatura"},
+        {"comodo": "cozinha", "sensor": "led"},
+        {"comodo": "quarto", "sensor": "umidade"},
+        {"comodo": "quarto", "sensor": "luz"},
+        {"comodo": "quarto", "sensor": "temperatura"},
+        {"comodo": "quarto", "sensor": "led"},
+        {"comodo": "quarto", "sensor": "lcd"},
+        {"comodo": "quarto", "sensor": "motor"},
+        {"comodo": "quarto", "sensor": "led_rgb"},
+        {"comodo": "quarto", "sensor": "servo"},
       ];
 
       for (var sensor in sensors) {
@@ -62,51 +76,102 @@ class _HomePageState extends State<HomePage> {
           children: [
             Ausente(isAusente: geolocatorProvider.isPresent),
             RoomInfo(roomName: 'Sala', icon: Icons.weekend),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SensorBox(
-                          sensorName: 'LED',
-                          icon: Icons.lightbulb,
-                          iconColor: Colors.yellow,
-                          value: sensorDataProvider.fetchedData['sala/led']
-                                  ?.toString() ??
-                              "Loading...",
-                        ),
-                        SizedBox(height: 10),
-                        SensorBox(
-                          sensorName: 'Luz',
-                          icon: Icons.wb_sunny,
-                          iconColor: Color.fromARGB(255, 255, 136, 1),
-                          value: sensorDataProvider.fetchedData['sala/luz']
-                                  ?.toString() ??
-                              "Loading...",
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: SensorBox(
-                      sensorName: 'Presença',
-                      icon: Icons.access_alarm,
-                      iconColor: Colors.blue,
-                      value: sensorDataProvider.fetchedData['sala/presenca']
-                              ?.toString() ??
-                          "Loading...",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 15),
+            _buildRoomSensors(sensorDataProvider, 'sala', [
+              {
+                'sensorName': 'lâmpada',
+                'icon': Icons.lightbulb,
+                'iconColor': Colors.yellow
+              },
+              {
+                'sensorName': 'iluminação',
+                'icon': Icons.wb_sunny,
+                'iconColor': Color.fromARGB(255, 255, 136, 1)
+              },
+              {
+                'sensorName': 'Presença',
+                'icon': Icons.access_alarm,
+                'iconColor': Colors.blue
+              },
+            ]),
+            RoomInfo(roomName: 'Banheiro', icon: Icons.bathroom),
+            _buildRoomSensors(sensorDataProvider, 'banheiro', [
+              {
+                'sensorName': 'iluminação',
+                'icon': Icons.wb_sunny,
+                'iconColor': Color.fromARGB(255, 255, 136, 1)
+              },
+              {
+                'sensorName': 'lâmpada',
+                'icon': Icons.lightbulb,
+                'iconColor': Colors.yellow
+              },
+            ]),
+            RoomInfo(roomName: 'Cozinha', icon: Icons.kitchen),
+            _buildRoomSensors(sensorDataProvider, 'cozinha', [
+              {
+                'sensorName': 'Umidade',
+                'icon': Icons.water_drop,
+                'iconColor': Colors.blue
+              },
+              {
+                'sensorName': 'Iluminação',
+                'icon': Icons.wb_sunny,
+                'iconColor': Color.fromARGB(255, 255, 136, 1)
+              },
+              {
+                'sensorName': 'Temperatura',
+                'icon': Icons.thermostat,
+                'iconColor': Colors.red
+              },
+              {
+                'sensorName': 'Lâmpada',
+                'icon': Icons.lightbulb,
+                'iconColor': Colors.yellow
+              },
+            ]),
             RoomInfo(roomName: 'Quarto', icon: Icons.bed),
+            _buildRoomSensors(sensorDataProvider, 'quarto', [
+              {
+                'sensorName': 'Umidade',
+                'icon': Icons.water_drop,
+                'iconColor': Colors.blue
+              },
+              {
+                'sensorName': 'iluminação',
+                'icon': Icons.wb_sunny,
+                'iconColor': Color.fromARGB(255, 255, 136, 1)
+              },
+              {
+                'sensorName': 'Temperatura',
+                'icon': Icons.thermostat,
+                'iconColor': Colors.red
+              },
+              {
+                'sensorName': 'lâmpada',
+                'icon': Icons.lightbulb,
+                'iconColor': Colors.yellow
+              },
+              {
+                'sensorName': 'Ar-Condicionado',
+                'icon': Icons.snowing,
+                'iconColor': Colors.blue
+              },
+              {
+                'sensorName': 'Motor',
+                'icon': Icons.build,
+                'iconColor': Colors.grey
+              },
+              {
+                'sensorName': 'LED RGB',
+                'icon': Icons.lightbulb_outline,
+                'iconColor': Colors.purple
+              },
+              {
+                'sensorName': 'Servo',
+                'icon': Icons.engineering,
+                'iconColor': Colors.orange
+              },
+            ]),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ElevatedButton.icon(
@@ -124,4 +189,32 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+Widget _buildRoomSensors(SensorDataProvider provider, String roomName,
+    List<Map<String, dynamic>> sensors) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: GridView(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 2,
+      ),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      children: sensors.map((sensor) {
+        final sensorKey = '$roomName/${sensor['sensorName'].toLowerCase()}';
+        final sensorValue =
+            provider.fetchedData[sensorKey]?.toString() ?? "Loading...";
+        return SensorBox(
+          sensorName: sensor['sensorName'],
+          icon: sensor['icon'],
+          iconColor: sensor['iconColor'],
+          value: sensorValue,
+        );
+      }).toList(),
+    ),
+  );
 }

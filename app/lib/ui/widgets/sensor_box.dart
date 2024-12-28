@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 
 class SensorBox extends StatelessWidget {
-  final String sensorName;
-  final IconData icon;
-  final Color iconColor;
-  final String value;
+  late final String sensorName;
+  late final IconData icon;
+  late final Color iconColor;
+  late final String value;
 
-  SensorBox({
-    required this.sensorName,
-    required this.icon,
-    required this.iconColor,
-    required this.value,
-  });
+  SensorBox(
+      {required this.sensorName,
+      required this.icon,
+      required this.iconColor,
+      required value}) {
+    String removeChave = value.replaceAll("}", "");
+    this.value = removeChave.split(" ").length > 1
+        ? removeChave.split(" ")[1].replaceAll(",", "")
+        : "Loading...";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,36 +25,48 @@ class SensorBox extends StatelessWidget {
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        children: [
-          Icon(icon, size: 30, color: iconColor),
-          SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  sensorName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(
+          padding: EdgeInsets.only(right: 0.6),
+          child: Icon(icon, size: 30, color: iconColor),
+        ),
+
+        // const SizedBox(width: 0.6),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                sensorName,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
-                SizedBox(height: 4),
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.grey,
-                  ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 4),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.grey,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        if (sensorName == "LED" ||
+            sensorName == "Servo" ||
+            sensorName == "Motor")
+          Switch(
+            value: false, // Valor inicial do switch
+            onChanged: (bool newValue) {
+              value = newValue ? "Ligado" : "Desligado";
+            },
+          ),
+      ]),
     );
   }
 }
