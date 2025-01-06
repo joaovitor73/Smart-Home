@@ -5,6 +5,9 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
+#define RXD1 1 // GPIO 1 como RX do ESP32
+#define TXD1 3 // GPIO 3 como TX do ESP32
+
 #define RXD2 16 // GPIO 16 como RX do ESP32
 #define TXD2 17 // GPIO 17 como TX do ESP32
 #define WIFI_SSID "A"
@@ -29,7 +32,8 @@ const byte ledSala = 2;
 const byte ledCozinha = 18;
 const byte ledQuarto = 19;
 const byte ledBanheiro = 21;
-const byte DHTPIN = 5;
+const byte DHTPIN_Cozinha = 5;
+const byte DHTPIN_Quarto = 5; // mudar depois o pino
 const byte redLedRGB = 25;
 const byte greenLedRGB = 33;
 const byte blueLedRGB = 32;
@@ -38,11 +42,15 @@ const byte motorQuartoA1 = 4;
 const byte motorQuartoB1 = 15;
 
 const int pinoPIR = 15;
-const int LDR_PIN = 34; 
+const int LDR_PIN_Quarto = 34; 
+const int LDR_PIN_Sala = 35; 
+const int LDR_PIN_Banheiro = 19; 
+const int LDR_PIN_Cozinha = 19; //mudar o pino depois 
 int cachePresenca = 0;
 byte ldrValue = 0;
 
-DHT dht(DHTPIN, DHTTYPE);
+DHT dhtCozinha(DHTPIN_Cozinha, DHTTYPE);
+DHT dhtQuarto(DHTPIN_Quarto, DHTTYPE);
 enum Comodo {
     SALA,
     QUARTO,
@@ -65,7 +73,8 @@ enum Sensor{
 
 void setup(){
     Serial.begin(115200);
-    Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2); 
+    Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
+    Serial2.begin(9600, SERIAL_8N1, RXD1, TXD1); 
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -84,8 +93,12 @@ void setup(){
     pinMode(ledQuarto, OUTPUT); 
     pinMode(ledBanheiro, OUTPUT);
     pinMode(pinoPIR, INPUT); 
-    pinMode(LDR_PIN, INPUT);
-    dht.begin();
+    pinMode(LDR_PIN_Quarto, INPUT);
+    pinMode(LDR_PIN_Sala, INPUT);
+    pinMode(LDR_PIN_Banheiro, INPUT);
+    pinMode(LDR_PIN_Cozinha, INPUT);
+    dhtCozinha.begin();
+    dhtQuarto.begin();
     pinMode(redLedRGB, OUTPUT);
     pinMode(greenLedRGB, OUTPUT);
     pinMode(blueLedRGB, OUTPUT);
@@ -175,7 +188,7 @@ void updateBanheiro(int valor, Sensor sensor,int id, const char* tipoSensor, con
    switch(sensor){ 
     case 4: digitalWrite(ledBanheiro, valor);
       break;
-    case 2: pushData(tipoSensor, id, map(analogRead(LDR_PIN), 0, 4095, 0, 255) , nomeComodo);
+    case 2: pushData(tipoSensor, id, map(analogRead(LDR_PIN_Banheiro), 0, 4095, 0, 255) , nomeComodo);
       break;
   }
 }
@@ -184,27 +197,28 @@ void updateCozinha(int valor, Sensor sensor, int id, const char* tipoSensor, con
    switch(sensor){
     case 4: digitalWrite(ledCozinha, valor);
       break;
-    case 3: pushData(tipoSensor, id, dht.readTemperature() , nomeComodo);
+    case 3: pushData(tipoSensor, id, dhtCozinha.readTemperature() , nomeComodo);
       break;
-    case 2: ldrValue = map(analogRead(LDR_PIN), 0, 4095, 0, 255);
+    case 2: ldrValue = map(analogRead(LDR_PIN_Cozinha), 0, 4095, 0, 255);
             pushData(tipoSensor, id, ldrValue , nomeComodo);
       break;
-    case 1: pushData(tipoSensor, id, dht.readHumidity() , nomeComodo);
+    case 1: pushData(tipoSensor, id, dhtCozinha.readHumidity() , nomeComodo);
       break;
   }
 }
 
 void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, const char* nomeComodo){
+    String ausente = Database.get<String>(aClient, "/smart_home/json/ausente");
    switch(sensor){
     case 9:
-      if (Serial2.available()) {
-        Serial2.print(valor);
-        Serial2.write(valor);
+      if (Serial1.available()) {
+        Serial1.print(valor); // colocar serial.write se der errado
         Serial.print("servo: ");
         Serial.println(valor);
      }  
       break;
     case 8:
+      break;
     break;
     case 7: 
       break;
@@ -214,22 +228,30 @@ void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, cons
       digitalWrite(motorQuartoB1, LOW);
       break;
     case 5: 
-      //  if (Serial3.available()) {
-      //   Serial3.write(valor);
-      // }
-     Serial.print("lcd: ");
-     Serial.println(valor);
+      if (Serial2.available()) {
+        Serial2.print(valor); // colocar serial.write se der errado
+      }
+      Serial.print("lcd: ");
+      Serial.println(valor);
       break;
-    case 4: digitalWrite(ledQuarto, valor);
+    case 4: 
+            digitalWrite(ledQuarto, valor);
       break;
-    case 3: pushData(tipoSensor, id, dht.readTemperature() , nomeComodo);
-            Serial.println(dht.readTemperature());
+    case 3: pushData(tipoSensor, id, dhtQuarto.readTemperature() , nomeComodo);
+            Serial.println(dhtQuarto.readTemperature());
       break;
-    case 2: ldrValue = map(analogRead(LDR_PIN), 0, 4095, 0, 255);
+    case 2: ldrValue = map(analogRead(LDR_PIN_Quarto), 0, 4095, 0, 255);
             pushData(tipoSensor, id, ldrValue , nomeComodo);
       break;
-    case 1: pushData(tipoSensor, id, dht.readHumidity() , nomeComodo);
-            Serial.println(dht.readHumidity());
+    case 1: pushData(tipoSensor, id, dhtQuarto.readHumidity() , nomeComodo);
+            Serial.println(dhtQuarto.readHumidity());
+      break;
+    case 0:
+      if(ausente == "1" && Serial2.available()){
+        Serial2.print(valor); // coloca serial.write se der errado
+        Serial.print("pir: ");
+        Serial.println(valor);
+      }
       break;
   }
 }
@@ -238,7 +260,7 @@ void updateSala(int valor, Sensor sensor, int id, const char* tipoSensor, const 
    switch(sensor){
     case 4: digitalWrite(ledSala, valor);
       break;
-    case 2: ldrValue = map(analogRead(LDR_PIN), 0, 4095, 0, 255);
+    case 2: ldrValue = map(analogRead(LDR_PIN_Sala), 0, 4095, 0, 255);
             pushData(tipoSensor, id, ldrValue , nomeComodo);
             Serial.println(ldrValue);
       break;
