@@ -12,9 +12,14 @@ class SensorBox extends StatelessWidget {
       required this.iconColor,
       required value}) {
     String removeChave = value.replaceAll("}", "");
-    this.value = removeChave.split(" ").length > 1
-        ? removeChave.split(" ")[1].replaceAll(",", "")
-        : "Loading...";
+    removeChave = removeChave.replaceAll("{", "");
+    if (this.sensorName != "LED RGB") {
+      this.value = removeChave.split(" ").length > 1
+          ? removeChave.split(" ")[1].replaceAll(",", "")
+          : "Loading...";
+    } else {
+      this.value = removeChave;
+    }
   }
 
   @override
@@ -57,7 +62,7 @@ class SensorBox extends StatelessWidget {
             ],
           ),
         ),
-        if (sensorName == "LED" ||
+        if (sensorName == "Lâmpada" ||
             sensorName == "Servo" ||
             sensorName == "Motor")
           Switch(

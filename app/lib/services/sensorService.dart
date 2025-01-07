@@ -14,13 +14,6 @@ class SensorDataProvider extends ChangeNotifier {
     _databaseRef.child(path).onValue.listen((event) {
       final data = event.snapshot.value;
       _fetchedData["$comodo/$sensor"] = data.toString();
-      if (sensor == "led_rgb") {
-        String s = "";
-        data.toString().split(',').forEach((element) {
-          s += element;
-        });
-        _fetchedData["$comodo/$sensor"] = s as String;
-      }
       notifyListeners();
     });
   }

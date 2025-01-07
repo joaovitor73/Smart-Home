@@ -1,3 +1,5 @@
+import 'package:app/ui/page/home_page.dart';
+import 'package:app/ui/page/rotinas_page.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -36,12 +38,28 @@ class AppDrawer extends StatelessWidget {
             title: 'Home',
             screen: 'Home',
             context: context,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
+            },
           ),
           _buildDrawerItem(
             icon: Icons.access_alarm,
             title: 'Rotinas',
             screen: 'Rotinas',
             context: context,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RotinaPage(),
+                ),
+              );
+            },
           ),
           Divider(),
           _buildDrawerItem(
@@ -66,6 +84,7 @@ class AppDrawer extends StatelessWidget {
     required String title,
     required String screen,
     required BuildContext context,
+    VoidCallback? onTap, // Adicione onTap como parâmetro
   }) {
     bool isSelected = currentScreen == screen;
     return ListTile(
@@ -82,10 +101,11 @@ class AppDrawer extends StatelessWidget {
         ),
       ),
       tileColor: isSelected ? Color(0xFFE0F5FE) : null,
-      onTap: () {
-        onSelectScreen(screen);
-        Navigator.pop(context);
-      },
+      onTap: onTap ??
+          () {
+            onSelectScreen(screen);
+            Navigator.pop(context);
+          },
     );
   }
 }
