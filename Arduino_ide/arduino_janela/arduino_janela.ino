@@ -13,9 +13,10 @@ void setup() {
 }
 
 void loop() {
-  if(Serial.available()){
-  char data = Serial.read();
-    Serial.print(data);
+  Serial.println(mySerial.available());
+  if(mySerial.available()){
+  char data = mySerial.read();
+    mySerial.print(data);
 
     if(data == '1'){
       meuServo.write(0);

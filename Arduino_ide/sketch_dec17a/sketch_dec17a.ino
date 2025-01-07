@@ -12,6 +12,12 @@
 #define DATABASE_URL "https://smart-home-876c0-default-rtdb.firebaseio.com/"
 #define DHTTYPE DHT22
 
+#define RXD1 13 // GPIO 13 como RX do ESP32
+#define TXD1 14 // GPIO 14 como TX do ESP32
+
+#define RXD2 16 // GPIO 16 como RX do ESP32
+#define TXD2 17 // GPIO 17 como TX do ESP32
+
 FirebaseApp app;
 DefaultNetwork network;
 WiFiClientSecure ssl_client;
@@ -51,11 +57,16 @@ enum Sensor{
   LCD,
   MOTOR,
   DISTANCIA,
-  LED_RGB
+  LED_RGB,
+  SERVO
 };
 
 void setup() {
+    
     Serial.begin(115200);
+    Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
+    Serial2.begin(9600, SERIAL_8N1, RXD1, TXD1); 
+
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (WiFi.status() != WL_CONNECTED) {
         Serial.print(".");
@@ -154,6 +165,15 @@ void updateCozinha(int valor, Sensor sensor, String tipoSensor, String nomeComod
 
 void updateQuarto(int valor, Sensor sensor, String tipoSensor, String nomeComodo){
    switch(sensor){
+    case 9:
+      if (Serial1.available()) {
+        Serial1.print(valor); // colocar serial.write se der errado
+        Serial.print("servo: ");
+        Serial.println(valor);
+     }  
+      Serial.print("servo sem serial: ");
+        Serial.println(valor);
+      break;
     case 8:
     break;
     case 7: 
@@ -164,6 +184,12 @@ void updateQuarto(int valor, Sensor sensor, String tipoSensor, String nomeComodo
       digitalWrite(motorQuartoB1, LOW);
       break;
     case 5: 
+       if (Serial2.available()) {
+        Serial2.print(valor); // colocar serial.write se der errado
+        Serial.println("Escrevi no lcd");
+      }
+      Serial.print("lcd: ");
+      Serial.println(valor);
       break;
   }
 }
@@ -192,4 +218,5 @@ Sensor getSensoresEnum(String sensor) {
     if (sensor == "luz") return LUZ;
     if (sensor == "temperatura") return TEMPERATURA;
     if (sensor == "led_rgb") return LED_RGB;
+    if(sensor == "servo") return SERVO;    
 }

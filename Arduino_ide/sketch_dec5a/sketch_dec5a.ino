@@ -5,11 +5,11 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
-#define RXD1 1 // GPIO 1 como RX do ESP32
-#define TXD1 3 // GPIO 3 como TX do ESP32
+#define RXD1 13 // GPIO 13 como RX do ESP32
+#define TXD1 14 // GPIO 14 como TX do ESP32
 
-#define RXD2 16 // GPIO 16 como RX do ESP32
-#define TXD2 17 // GPIO 17 como TX do ESP32
+// #define RXD2 16 // GPIO 16 como RX do ESP32
+// #define TXD2 17 // GPIO 17 como TX do ESP32
 #define WIFI_SSID "A"
 #define WIFI_PASSWORD "12345678"
 #define API_KEY "AIzaSyB2hyLRaBR3ZVqmnHYkvXN1IvZV_NJusFc"
@@ -33,7 +33,7 @@ const byte ledCozinha = 18;
 const byte ledQuarto = 19;
 const byte ledBanheiro = 21;
 const byte DHTPIN_Cozinha = 5;
-const byte DHTPIN_Quarto = 5; // mudar depois o pino
+const byte DHTPIN_Quarto = 18; // mudar depois o pino
 const byte redLedRGB = 25;
 const byte greenLedRGB = 33;
 const byte blueLedRGB = 32;
@@ -67,13 +67,12 @@ enum Sensor{
   LCD,
   MOTOR,
   DISTANCIA,
-  LED_RGB,
-  SERVO
+  LED_RGB
 };
 
 void setup(){
     Serial.begin(115200);
-    Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
+    // Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
     Serial2.begin(9600, SERIAL_8N1, RXD1, TXD1); 
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (WiFi.status() != WL_CONNECTED)
@@ -89,7 +88,7 @@ void setup(){
     Database.url(DATABASE_URL);
 
     pinMode(ledSala, OUTPUT); 
-    pinMode(ledCozinha, OUTPUT); 
+    // pinMode(ledCozinha, OUTPUT); 
     pinMode(ledQuarto, OUTPUT); 
     pinMode(ledBanheiro, OUTPUT);
     pinMode(pinoPIR, INPUT); 
@@ -210,13 +209,13 @@ void updateCozinha(int valor, Sensor sensor, int id, const char* tipoSensor, con
 void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, const char* nomeComodo){
     String ausente = Database.get<String>(aClient, "/smart_home/json/ausente");
    switch(sensor){
-    case 9:
-      if (Serial1.available()) {
-        Serial1.print(valor); // colocar serial.write se der errado
-        Serial.print("servo: ");
-        Serial.println(valor);
-     }  
-      break;
+    // case 9:
+    //   if (Serial1.available()) {
+    //     Serial1.print(valor); // colocar serial.write se der errado
+    //     Serial.print("servo: ");
+    //     Serial.println(valor);
+    //  }  
+    //   break;
     case 8:
       break;
     break;
@@ -228,11 +227,12 @@ void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, cons
       digitalWrite(motorQuartoB1, LOW);
       break;
     case 5: 
-      if (Serial2.available()) {
-        Serial2.print(valor); // colocar serial.write se der errado
-      }
-      Serial.print("lcd: ");
-      Serial.println(valor);
+      // if (Serial2.available()) {
+      //   Serial2.print(valor); // colocar serial.write se der errado
+      //   Serial.println("Escrevi no lcd");
+      // }
+      // Serial.print("lcd: ");
+      // Serial.println(valor);
       break;
     case 4: 
             digitalWrite(ledQuarto, valor);
@@ -291,7 +291,6 @@ Sensor getSensoresEnum(const char* sensor){
   if(strcmp(sensor, "luz") == 0) return LUZ;
   if(strcmp(sensor, "temperatura") == 0) return TEMPERATURA;
   if(strcmp(sensor, "led_rgb") == 0) return LED_RGB;
-  if(strcmp(sensor, "servo")== 0) return SERVO;    
 }
 
 
