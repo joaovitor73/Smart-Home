@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> {
         {"comodo": "quarto", "sensor": "umidade"},
         {"comodo": "quarto", "sensor": "luz"},
         {"comodo": "quarto", "sensor": "temperatura"},
-        {"comodo": "quarto", "sensor": "led"},
         {"comodo": "quarto", "sensor": "lcd"},
         {"comodo": "quarto", "sensor": "motor"},
         {"comodo": "quarto", "sensor": "led_rgb"},
@@ -64,7 +63,6 @@ class _HomePageState extends State<HomePage> {
     final geolocatorProvider =
         Provider.of<GeoLocatorService>(context, listen: true);
 
-    realTimerProvider.modoCabare();
     return Scaffold(
       appBar: CustomAppBar(),
       drawer: AppDrawer(
@@ -78,17 +76,17 @@ class _HomePageState extends State<HomePage> {
             RoomInfo(roomName: 'Sala', icon: Icons.weekend),
             _buildRoomSensors(sensorDataProvider, 'sala', [
               {
-                'sensorName': 'lâmpada',
+                'sensorName': 'led',
                 'icon': Icons.lightbulb,
                 'iconColor': Colors.yellow
               },
               {
-                'sensorName': 'iluminação',
+                'sensorName': 'luz',
                 'icon': Icons.wb_sunny,
                 'iconColor': Color.fromARGB(255, 255, 136, 1)
               },
               {
-                'sensorName': 'Presença',
+                'sensorName': 'presenca',
                 'icon': Icons.access_alarm,
                 'iconColor': Colors.blue
               },
@@ -96,12 +94,12 @@ class _HomePageState extends State<HomePage> {
             RoomInfo(roomName: 'Banheiro', icon: Icons.bathroom),
             _buildRoomSensors(sensorDataProvider, 'banheiro', [
               {
-                'sensorName': 'iluminação',
+                'sensorName': 'luz',
                 'icon': Icons.wb_sunny,
                 'iconColor': Color.fromARGB(255, 255, 136, 1)
               },
               {
-                'sensorName': 'lâmpada',
+                'sensorName': 'led',
                 'icon': Icons.lightbulb,
                 'iconColor': Colors.yellow
               },
@@ -114,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                 'iconColor': Colors.blue
               },
               {
-                'sensorName': 'Iluminação',
+                'sensorName': 'luz',
                 'icon': Icons.wb_sunny,
                 'iconColor': Color.fromARGB(255, 255, 136, 1)
               },
@@ -124,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                 'iconColor': Colors.red
               },
               {
-                'sensorName': 'Lâmpada',
+                'sensorName': 'led',
                 'icon': Icons.lightbulb,
                 'iconColor': Colors.yellow
               },
@@ -137,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                 'iconColor': Colors.blue
               },
               {
-                'sensorName': 'iluminação',
+                'sensorName': 'luz',
                 'icon': Icons.wb_sunny,
                 'iconColor': Color.fromARGB(255, 255, 136, 1)
               },
@@ -147,12 +145,7 @@ class _HomePageState extends State<HomePage> {
                 'iconColor': Colors.red
               },
               {
-                'sensorName': 'lâmpada',
-                'icon': Icons.lightbulb,
-                'iconColor': Colors.yellow
-              },
-              {
-                'sensorName': 'Ar-Condicionado',
+                'sensorName': 'lcd',
                 'icon': Icons.snowing,
                 'iconColor': Colors.blue
               },
@@ -162,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                 'iconColor': Colors.grey
               },
               {
-                'sensorName': 'LED RGB',
+                'sensorName': 'led_rgb',
                 'icon': Icons.lightbulb_outline,
                 'iconColor': Colors.purple
               },
@@ -206,10 +199,24 @@ Widget _buildRoomSensors(SensorDataProvider provider, String roomName,
       shrinkWrap: true,
       children: sensors.map((sensor) {
         final sensorKey = '$roomName/${sensor['sensorName'].toLowerCase()}';
+        String sensorName = sensor['sensorName'];
+
         final sensorValue =
             provider.fetchedData[sensorKey]?.toString() ?? "Loading...";
+
+        if (sensor['sensorName'] == "led") {
+          sensorName = "Lâmpada";
+        } else if (sensor['sensorName'] == "luz") {
+          sensorName = "Iluminação";
+        } else if (sensor['sensorName'] == "presenca") {
+          sensorName = "Presença";
+        } else if (sensor['sensorName'] == "lcd") {
+          sensorName = "Ar-Condicionado";
+        } else if (sensor['sensorName'] == "led_rgb") {
+          sensorName = "LED RGB";
+        }
         return SensorBox(
-          sensorName: sensor['sensorName'],
+          sensorName: sensorName,
           icon: sensor['icon'],
           iconColor: sensor['iconColor'],
           value: sensorValue,

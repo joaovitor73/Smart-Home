@@ -51,10 +51,7 @@ class GeoLocatorService extends ChangeNotifier {
   }
 
   Future<void> captureLocation(Position position) async {
-    if ((position.latitude >= double.parse(latitudeCasaX1) &&
-            position.latitude <= double.parse(latitudeCasaX2)) &&
-        (position.longitude >= double.parse(longitudeCasaY1) &&
-            position.longitude <= double.parse(longitudeCasaY2))) {
+    if (1 == 1) {
       SharedService.recuperarSensores('casa');
       isPresent = "Presente";
     } else {
