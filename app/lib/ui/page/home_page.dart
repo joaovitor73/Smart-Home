@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -74,106 +76,123 @@ class _HomePageState extends State<HomePage> {
           children: [
             Ausente(isAusente: geolocatorProvider.isPresent),
             RoomInfo(roomName: 'Sala', icon: Icons.weekend),
-            _buildRoomSensors(sensorDataProvider, 'sala', [
-              {
-                'sensorName': 'led',
-                'icon': Icons.lightbulb,
-                'iconColor': Colors.yellow
-              },
-              {
-                'sensorName': 'luz',
-                'icon': Icons.wb_sunny,
-                'iconColor': Color.fromARGB(255, 255, 136, 1)
-              },
-              {
-                'sensorName': 'presenca',
-                'icon': Icons.access_alarm,
-                'iconColor': Colors.blue
-              },
-            ]),
+            _buildRoomSensors(
+                sensorDataProvider,
+                'sala',
+                [
+                  {
+                    'sensorName': 'led',
+                    'icon': Icons.lightbulb,
+                    'iconColor': Colors.yellow,
+                  },
+                  {
+                    'sensorName': 'luz',
+                    'icon': Icons.wb_sunny,
+                    'iconColor': const Color.fromARGB(255, 255, 136, 1)
+                  },
+                  {
+                    'sensorName': 'presenca',
+                    'icon': Icons.access_alarm,
+                    'iconColor': Colors.blue
+                  },
+                ],
+                realTimerProvider),
             RoomInfo(roomName: 'Banheiro', icon: Icons.bathroom),
-            _buildRoomSensors(sensorDataProvider, 'banheiro', [
-              {
-                'sensorName': 'luz',
-                'icon': Icons.wb_sunny,
-                'iconColor': Color.fromARGB(255, 255, 136, 1)
-              },
-              {
-                'sensorName': 'led',
-                'icon': Icons.lightbulb,
-                'iconColor': Colors.yellow
-              },
-            ]),
+            _buildRoomSensors(
+                sensorDataProvider,
+                'banheiro',
+                [
+                  {
+                    'sensorName': 'luz',
+                    'icon': Icons.wb_sunny,
+                    'iconColor': const Color.fromARGB(255, 255, 136, 1),
+                  },
+                  {
+                    'sensorName': 'led',
+                    'icon': Icons.lightbulb,
+                    'iconColor': Colors.yellow
+                  },
+                ],
+                realTimerProvider),
             RoomInfo(roomName: 'Cozinha', icon: Icons.kitchen),
-            _buildRoomSensors(sensorDataProvider, 'cozinha', [
-              {
-                'sensorName': 'Umidade',
-                'icon': Icons.water_drop,
-                'iconColor': Colors.blue
-              },
-              {
-                'sensorName': 'luz',
-                'icon': Icons.wb_sunny,
-                'iconColor': Color.fromARGB(255, 255, 136, 1)
-              },
-              {
-                'sensorName': 'Temperatura',
-                'icon': Icons.thermostat,
-                'iconColor': Colors.red
-              },
-              {
-                'sensorName': 'led',
-                'icon': Icons.lightbulb,
-                'iconColor': Colors.yellow
-              },
-            ]),
+            _buildRoomSensors(
+                sensorDataProvider,
+                'cozinha',
+                [
+                  {
+                    'sensorName': 'Umidade',
+                    'icon': Icons.water_drop,
+                    'iconColor': Colors.blue
+                  },
+                  {
+                    'sensorName': 'luz',
+                    'icon': Icons.wb_sunny,
+                    'iconColor': const Color.fromARGB(255, 255, 136, 1)
+                  },
+                  {
+                    'sensorName': 'Temperatura',
+                    'icon': Icons.thermostat,
+                    'iconColor': Colors.red
+                  },
+                  {
+                    'sensorName': 'led',
+                    'icon': Icons.lightbulb,
+                    'iconColor': Colors.yellow
+                  },
+                ],
+                realTimerProvider),
             RoomInfo(roomName: 'Quarto', icon: Icons.bed),
-            _buildRoomSensors(sensorDataProvider, 'quarto', [
-              {
-                'sensorName': 'Umidade',
-                'icon': Icons.water_drop,
-                'iconColor': Colors.blue
-              },
-              {
-                'sensorName': 'luz',
-                'icon': Icons.wb_sunny,
-                'iconColor': Color.fromARGB(255, 255, 136, 1)
-              },
-              {
-                'sensorName': 'Temperatura',
-                'icon': Icons.thermostat,
-                'iconColor': Colors.red
-              },
-              {
-                'sensorName': 'lcd',
-                'icon': Icons.snowing,
-                'iconColor': Colors.blue
-              },
-              {
-                'sensorName': 'Motor',
-                'icon': Icons.build,
-                'iconColor': Colors.grey
-              },
-              {
-                'sensorName': 'led_rgb',
-                'icon': Icons.lightbulb_outline,
-                'iconColor': Colors.purple
-              },
-              {
-                'sensorName': 'Servo',
-                'icon': Icons.engineering,
-                'iconColor': Colors.orange
-              },
-            ]),
+            _buildRoomSensors(
+                sensorDataProvider,
+                'quarto',
+                [
+                  {
+                    'sensorName': 'Umidade',
+                    'icon': Icons.water_drop,
+                    'iconColor': Colors.blue
+                  },
+                  {
+                    'sensorName': 'luz',
+                    'icon': Icons.wb_sunny,
+                    'iconColor': const Color.fromARGB(255, 255, 136, 1)
+                  },
+                  {
+                    'sensorName': 'Temperatura',
+                    'icon': Icons.thermostat,
+                    'iconColor': Colors.red
+                  },
+                  {
+                    'sensorName': 'lcd',
+                    'icon': Icons.snowing,
+                    'iconColor': Colors.blue
+                  },
+                  {
+                    'sensorName': 'Motor',
+                    'icon': Icons.build,
+                    'iconColor': Colors.grey
+                  },
+                  {
+                    'sensorName': 'led_rgb',
+                    'icon': Icons.lightbulb_outline,
+                    'iconColor': Colors.purple
+                  },
+                  {
+                    'sensorName': 'Servo',
+                    'icon': Icons.window,
+                    'iconColor': Colors.blue
+                  },
+                ],
+                realTimerProvider),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ElevatedButton.icon(
                 onPressed: realTimerProvider.modoCabare,
-                icon: Icon(Icons.flash_on, color: Colors.white),
-                label: Text("Ativar Modo Cabaré"),
+                icon: const Icon(Icons.flash_on, color: Colors.white),
+                label: const Text("Ativar Modo Cabaré"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                 ),
               ),
             ),
@@ -185,7 +204,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 Widget _buildRoomSensors(SensorDataProvider provider, String roomName,
-    List<Map<String, dynamic>> sensors) {
+    List<Map<String, dynamic>> sensors, RealtimeService realTimerProvider) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20),
     child: GridView(
@@ -200,27 +219,38 @@ Widget _buildRoomSensors(SensorDataProvider provider, String roomName,
       children: sensors.map((sensor) {
         final sensorKey = '$roomName/${sensor['sensorName'].toLowerCase()}';
         String sensorName = sensor['sensorName'];
-
+        String displayValue;
         final sensorValue =
-            provider.fetchedData[sensorKey]?.toString() ?? "Loading...";
-
+            provider.fetchedData[sensorKey]?.toString() ?? "...Loading";
+        displayValue = sensorValue;
         if (sensor['sensorName'] == "led") {
           sensorName = "Lâmpada";
         } else if (sensor['sensorName'] == "luz") {
-          sensorName = "Iluminação";
+          sensorName = "Luminosidade";
         } else if (sensor['sensorName'] == "presenca") {
           sensorName = "Presença";
+          displayValue = sensorValue == "1" ? "Detectado" : "Não detectado";
         } else if (sensor['sensorName'] == "lcd") {
           sensorName = "Ar-Condicionado";
         } else if (sensor['sensorName'] == "led_rgb") {
           sensorName = "LED RGB";
+        } else if (sensor['sensorName'] == "Servo") {
+          sensorName = "Janela";
         }
-        return SensorBox(
-          sensorName: sensorName,
-          icon: sensor['icon'],
-          iconColor: sensor['iconColor'],
-          value: sensorValue,
-        );
+        if (sensor['sensorName'] != "Motor") {
+          return SensorBox(
+            sensorName: sensorName,
+            comodo: roomName,
+            icon: sensor['icon'],
+            iconColor: sensor['iconColor'],
+            value: sensorValue,
+            realTimerProvider: realTimerProvider,
+          );
+        } else {
+          return const SizedBox(
+            width: 0,
+          );
+        }
       }).toList(),
     ),
   );

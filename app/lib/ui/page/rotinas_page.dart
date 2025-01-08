@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RotinaPage extends StatefulWidget {
+  const RotinaPage({super.key});
+
   @override
   _RotinaPageState createState() => _RotinaPageState();
 }
@@ -154,15 +156,15 @@ class _RotinaPageState extends State<RotinaPage> {
             children: [
               TextField(
                 controller: comodoController,
-                decoration: InputDecoration(labelText: 'Cômodo'),
+                decoration: const InputDecoration(labelText: 'Cômodo'),
               ),
               TextField(
                 controller: sensorController,
-                decoration: InputDecoration(labelText: 'Sensor'),
+                decoration: const InputDecoration(labelText: 'Sensor'),
               ),
               TextField(
                 controller: dadosController,
-                decoration: InputDecoration(labelText: 'Valor'),
+                decoration: const InputDecoration(labelText: 'Valor'),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -170,7 +172,7 @@ class _RotinaPageState extends State<RotinaPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancelar'),
+              child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -181,7 +183,7 @@ class _RotinaPageState extends State<RotinaPage> {
                     sensorController.text, newDados);
                 Navigator.of(context).pop();
               },
-              child: Text('Salvar'),
+              child: const Text('Salvar'),
             ),
           ],
         );
@@ -205,15 +207,15 @@ class _RotinaPageState extends State<RotinaPage> {
             children: [
               TextField(
                 controller: comodoController,
-                decoration: InputDecoration(labelText: 'Cômodo'),
+                decoration: const InputDecoration(labelText: 'Cômodo'),
               ),
               TextField(
                 controller: sensorController,
-                decoration: InputDecoration(labelText: 'Sensor'),
+                decoration: const InputDecoration(labelText: 'Sensor'),
               ),
               TextField(
                 controller: dadosController,
-                decoration: InputDecoration(labelText: 'Valor'),
+                decoration: const InputDecoration(labelText: 'Valor'),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -221,7 +223,7 @@ class _RotinaPageState extends State<RotinaPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancelar'),
+              child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -232,7 +234,7 @@ class _RotinaPageState extends State<RotinaPage> {
                     sensorController.text, dados);
                 Navigator.of(context).pop();
               },
-              child: Text('Adicionar'),
+              child: const Text('Adicionar'),
             ),
           ],
         );
@@ -249,7 +251,7 @@ class _RotinaPageState extends State<RotinaPage> {
         onSelectScreen: onSelectScreen,
       ),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         children: [
           _buildRotinaSection(
             "Casa",
@@ -257,7 +259,7 @@ class _RotinaPageState extends State<RotinaPage> {
             Colors.blue[50]!,
             Colors.blue[600]!,
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildRotinaSection(
             "Fora de Casa",
             foraRotinas,
@@ -279,7 +281,7 @@ class _RotinaPageState extends State<RotinaPage> {
           color: bgColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Row(
@@ -299,9 +301,9 @@ class _RotinaPageState extends State<RotinaPage> {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             rotinas.isEmpty
-                ? Center(child: Text('Nenhuma rotina adicionada'))
+                ? const Center(child: Text('Nenhuma rotina adicionada'))
                 : ListView.builder(
                     shrinkWrap: true,
                     itemCount: rotinas.length,
@@ -314,11 +316,11 @@ class _RotinaPageState extends State<RotinaPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               onPressed: () => _openEditModal(category, index),
                             ),
                             IconButton(
-                              icon: Icon(Icons.delete),
+                              icon: const Icon(Icons.delete),
                               onPressed: () => _deleteRotina(category, index),
                             ),
                           ],
