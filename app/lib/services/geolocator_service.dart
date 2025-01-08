@@ -9,7 +9,8 @@ class GeoLocatorService extends ChangeNotifier {
   String latitudeCasaX2 = "-5.8950000";
   String longitudeCasaY1 = "-35.630000";
   String longitudeCasaY2 = "-35.630000";
-  String isPresent = "";
+  String isPresent = ""; // Estado atual (Presente ou Ausente)
+  String valorAnterior = ""; // Estado anterior
 
   GeoLocatorService() {
     requestPermission();
@@ -51,14 +52,36 @@ class GeoLocatorService extends ChangeNotifier {
   }
 
   Future<void> captureLocation(Position position) async {
-    if (1 == 1) {
-      SharedService.recuperarSensores('casa');
-      isPresent = "Presente";
-    } else {
-      SharedService.recuperarSensores('fora_casa');
-      isPresent = "Ausente";
+    // Verificar se o usuário está em casa
+    bool estaEmCasa = _verificarPresenca(
+      position.latitude,
+      position.longitude,
+    );
+
+    // Atualizar estado apenas se houver mudança
+    if (estaEmCasa && isPresent != "Presente") {
+      ativarPresencao(true); // Usuário entrou em casa
+    } else if (!estaEmCasa && isPresent != "Ausente") {
+      ativarPresencao(false); // Usuário saiu de casa
     }
+
     print("Posição: ${position.latitude}, ${position.longitude}");
     notifyListeners();
+  }
+
+  bool _verificarPresenca(double latitude, double longitude) {
+    // Lógica para verificar se está dentro das coordenadas da casa
+    return (true);
+  }
+
+  void ativarPresencao(bool flag) {
+    if (flag) {
+      SharedService.recuperarSensores('Casa');
+      isPresent = "Presente";
+    } else {
+      SharedService.recuperarSensores('Fora de Casa');
+      isPresent = "Ausente";
+    }
+    valorAnterior = isPresent; // Atualiza o estado anterior
   }
 }

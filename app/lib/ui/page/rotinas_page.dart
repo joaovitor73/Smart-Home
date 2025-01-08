@@ -35,8 +35,8 @@ class _RotinaPageState extends State<RotinaPage> {
   _loadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    List<String> casaData = prefs.getStringList('casa') ?? [];
-    List<String> foraData = prefs.getStringList('fora') ?? [];
+    List<String> casaData = prefs.getStringList('Casa') ?? [];
+    List<String> foraData = prefs.getStringList('Fora de Casa') ?? [];
 
     setState(() {
       casaRotinas = casaData.map((sensorJson) {
@@ -65,7 +65,7 @@ class _RotinaPageState extends State<RotinaPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setStringList(
-      'casa',
+      'Casa',
       casaRotinas.map((sensor) {
         sensor.dados['valor'] = sensor.dados['valor'] is double
             ? sensor.dados['valor']
@@ -75,7 +75,7 @@ class _RotinaPageState extends State<RotinaPage> {
     );
 
     prefs.setStringList(
-      'fora',
+      'Fora de Casa',
       foraRotinas.map((sensor) {
         sensor.dados['valor'] = sensor.dados['valor'] is double
             ? sensor.dados['valor']

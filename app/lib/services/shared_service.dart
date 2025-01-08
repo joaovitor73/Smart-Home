@@ -18,7 +18,7 @@ class SharedService {
   }
 
   static Future<List<Sensor>> recuperarSensores(String rotina) async {
-    if (rotina == "casa") {
+    if (rotina == "Casa") {
       await realtimeService.updateAusencia(estado: 0);
     } else {
       await realtimeService.updateAusencia(estado: 1);

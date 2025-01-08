@@ -31,7 +31,6 @@ class SensorBox extends StatelessWidget {
       String removeChave = value.replaceAll("}", "");
       removeChave = removeChave.replaceAll("{", "");
       if (sensorName != "LED RGB") {
-        print(sensorName);
         value = removeChave.split(" ").length > 1
             ? removeChave.split(" ")[1].replaceAll(",", "")
             : "Loading...";
