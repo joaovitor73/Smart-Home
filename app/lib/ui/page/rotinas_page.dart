@@ -14,10 +14,17 @@ class RotinaPage extends StatefulWidget {
 }
 
 class _RotinaPageState extends State<RotinaPage> {
+  // ignore: unused_field
   String _currentScreen = 'Casa';
 
   List<Sensor> casaRotinas = [];
   List<Sensor> foraRotinas = [];
+  final List<String> comodosDisponiveis = [
+    'sala',
+    'cozinha',
+    'quarto',
+    'banheiro'
+  ];
 
   @override
   void initState() {
@@ -25,7 +32,6 @@ class _RotinaPageState extends State<RotinaPage> {
     _loadData();
   }
 
-  // Carregar dados de SharedPreferences
   _loadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -37,7 +43,6 @@ class _RotinaPageState extends State<RotinaPage> {
         Map<String, dynamic> sensorMap = jsonDecode(sensorJson);
         if (sensorMap['dados'] != null &&
             sensorMap['dados']['valor'] is String) {
-          // Converte o valor para double se necessário
           sensorMap['dados']['valor'] =
               double.tryParse(sensorMap['dados']['valor']);
         }
@@ -48,7 +53,6 @@ class _RotinaPageState extends State<RotinaPage> {
         Map<String, dynamic> sensorMap = jsonDecode(sensorJson);
         if (sensorMap['dados'] != null &&
             sensorMap['dados']['valor'] is String) {
-          // Converte o valor para double se necessário
           sensorMap['dados']['valor'] =
               double.tryParse(sensorMap['dados']['valor']);
         }
@@ -57,26 +61,25 @@ class _RotinaPageState extends State<RotinaPage> {
     });
   }
 
-  // Função para salvar dados em SharedPreferences
   _saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Salvando casaRotinas
     prefs.setStringList(
       'casa',
       casaRotinas.map((sensor) {
-        // Convertendo 'valor' para String antes de salvar
-        sensor.dados['valor'] = sensor.dados['valor'].toString();
+        sensor.dados['valor'] = sensor.dados['valor'] is double
+            ? sensor.dados['valor']
+            : double.tryParse(sensor.dados['valor'].toString()) ?? 0.0;
         return jsonEncode(sensor.toJson());
       }).toList(),
     );
 
-    // Salvando foraRotinas
     prefs.setStringList(
       'fora',
       foraRotinas.map((sensor) {
-        // Convertendo 'valor' para String antes de salvar
-        sensor.dados['valor'] = sensor.dados['valor'].toString();
+        sensor.dados['valor'] = sensor.dados['valor'] is double
+            ? sensor.dados['valor']
+            : double.tryParse(sensor.dados['valor'].toString()) ?? 0.0;
         return jsonEncode(sensor.toJson());
       }).toList(),
     );
@@ -88,37 +91,78 @@ class _RotinaPageState extends State<RotinaPage> {
     });
   }
 
-  // Função para adicionar sensores
   void _addRotina(
       String category, String comodo, String nome, Map<String, dynamic> dados) {
-    setState(() {
-      if (category == 'Casa') {
-        casaRotinas.add(Sensor(comodo: comodo, nome: nome, dados: dados));
-      } else if (category == 'Fora de Casa') {
-        foraRotinas.add(Sensor(comodo: comodo, nome: nome, dados: dados));
-      }
-    });
+    bool exists = (category == 'Casa' ? casaRotinas : foraRotinas)
+        .any((sensor) => sensor.comodo == comodo && sensor.nome == nome);
 
-    _saveData(); // Salva os dados ao adicionar
+    if (exists) {
+      _showErrorDialog('Já existe um sensor com o mesmo nome neste cômodo.');
+    } else {
+      setState(() {
+        if (category == 'Casa') {
+          casaRotinas.add(Sensor(comodo: comodo, nome: nome, dados: {
+            'valor': double.tryParse(dados['valor'].toString()) ?? 0.0,
+          }));
+        } else if (category == 'Fora de Casa') {
+          foraRotinas.add(Sensor(comodo: comodo, nome: nome, dados: {
+            'valor': double.tryParse(dados['valor'].toString()) ?? 0.0,
+          }));
+        }
+      });
+
+      _saveData();
+    }
   }
 
-  // Função para editar sensores
   void _editRotina(String category, int index, String newComodo,
       String newSensor, Map<String, dynamic> newDados) {
-    setState(() {
-      if (category == 'Casa') {
-        casaRotinas[index] =
-            Sensor(comodo: newComodo, nome: newSensor, dados: newDados);
-      } else if (category == 'Fora de Casa') {
-        foraRotinas[index] =
-            Sensor(comodo: newComodo, nome: newSensor, dados: newDados);
-      }
-    });
+    bool exists = (category == 'Casa' ? casaRotinas : foraRotinas).any(
+        (sensor) =>
+            sensor.comodo == newComodo &&
+            sensor.nome == newSensor &&
+            (category == 'Casa'
+                ? casaRotinas.indexOf(sensor) != index
+                : foraRotinas.indexOf(sensor) != index));
 
-    _saveData(); // Salva os dados após editar
+    if (exists) {
+      _showErrorDialog('Já existe um sensor com o mesmo nome neste cômodo.');
+    } else {
+      setState(() {
+        if (category == 'Casa') {
+          casaRotinas[index] =
+              Sensor(comodo: newComodo, nome: newSensor, dados: {
+            'valor': double.tryParse(newDados['valor'].toString()) ?? 0.0,
+          });
+        } else if (category == 'Fora de Casa') {
+          foraRotinas[index] =
+              Sensor(comodo: newComodo, nome: newSensor, dados: {
+            'valor': double.tryParse(newDados['valor'].toString()) ?? 0.0,
+          });
+        }
+      });
+      _saveData();
+    }
   }
 
-  // Função para excluir sensores
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Erro'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _deleteRotina(String category, int index) {
     setState(() {
       if (category == 'Casa') {
@@ -128,15 +172,14 @@ class _RotinaPageState extends State<RotinaPage> {
       }
     });
 
-    _saveData(); // Salva os dados após excluir
+    _saveData();
   }
 
-  // Função para abrir modal de edição
   void _openEditModal(String category, int index) {
-    final comodoController = TextEditingController(
-        text: category == 'Casa'
-            ? casaRotinas[index].comodo
-            : foraRotinas[index].comodo);
+    String? selectedComodo = category == 'Casa'
+        ? casaRotinas[index].comodo
+        : foraRotinas[index].comodo;
+
     final sensorController = TextEditingController(
         text: category == 'Casa'
             ? casaRotinas[index].nome
@@ -154,9 +197,20 @@ class _RotinaPageState extends State<RotinaPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: comodoController,
-                decoration: const InputDecoration(labelText: 'Cômodo'),
+              DropdownButtonFormField<String>(
+                value: selectedComodo,
+                items: comodosDisponiveis
+                    .map((comodo) => DropdownMenuItem(
+                          value: comodo,
+                          child: Text(comodo),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedComodo = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Cômodo'),
               ),
               TextField(
                 controller: sensorController,
@@ -179,21 +233,20 @@ class _RotinaPageState extends State<RotinaPage> {
                 Map<String, dynamic> newDados = {
                   'valor': double.tryParse(dadosController.text) ?? 0.0,
                 };
-                _editRotina(category, index, comodoController.text,
+                _editRotina(category, index, selectedComodo ?? '',
                     sensorController.text, newDados);
                 Navigator.of(context).pop();
               },
-              child: const Text('Salvar'),
-            ),
+              child: Text('Salvar'),
+            )
           ],
         );
       },
     );
   }
 
-  // Função para abrir modal de adicionar rotina
   void _openAddModal(String category) {
-    final comodoController = TextEditingController();
+    String? selectedComodo;
     final sensorController = TextEditingController();
     final dadosController = TextEditingController();
 
@@ -205,9 +258,20 @@ class _RotinaPageState extends State<RotinaPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: comodoController,
-                decoration: const InputDecoration(labelText: 'Cômodo'),
+              DropdownButtonFormField<String>(
+                value: selectedComodo,
+                items: comodosDisponiveis
+                    .map((comodo) => DropdownMenuItem(
+                          value: comodo,
+                          child: Text(comodo),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedComodo = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Cômodo'),
               ),
               TextField(
                 controller: sensorController,
@@ -230,12 +294,12 @@ class _RotinaPageState extends State<RotinaPage> {
                 Map<String, dynamic> dados = {
                   'valor': double.tryParse(dadosController.text) ?? 0.0,
                 };
-                _addRotina(category, comodoController.text,
+                _addRotina(category, selectedComodo ?? '',
                     sensorController.text, dados);
                 Navigator.of(context).pop();
               },
-              child: const Text('Adicionar'),
-            ),
+              child: Text('Adicionar'),
+            )
           ],
         );
       },
@@ -301,32 +365,34 @@ class _RotinaPageState extends State<RotinaPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            Divider(color: accentColor),
             rotinas.isEmpty
-                ? const Center(child: Text('Nenhuma rotina adicionada'))
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: rotinas.length,
-                    itemBuilder: (context, index) {
-                      final sensor = rotinas[index];
+                ? Text(
+                    'Nenhuma rotina adicionada.',
+                    style: TextStyle(color: Colors.grey),
+                  )
+                : Column(
+                    children: rotinas.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      Sensor rotina = entry.value;
                       return ListTile(
-                        title: Text(sensor.nome),
-                        subtitle: Text(sensor.comodo),
+                        title: Text(rotina.nome),
+                        subtitle: Text('Cômodo: ${rotina.comodo}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit),
+                              icon: Icon(Icons.edit, color: accentColor),
                               onPressed: () => _openEditModal(category, index),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete),
+                              icon: Icon(Icons.delete, color: Colors.red),
                               onPressed: () => _deleteRotina(category, index),
                             ),
                           ],
                         ),
                       );
-                    },
+                    }).toList(),
                   ),
           ],
         ),
