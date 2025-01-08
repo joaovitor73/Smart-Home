@@ -33,7 +33,7 @@ const byte ledCozinha = 18;
 const byte ledQuarto = 19;
 const byte ledBanheiro = 21;
 const byte DHTPIN_Cozinha = 5;
-const byte DHTPIN_Quarto = 18; // mudar depois o pino
+const byte DHTPIN_Quarto = 18;
 const byte redLedRGB = 25;
 const byte greenLedRGB = 33;
 const byte blueLedRGB = 32;
@@ -43,9 +43,9 @@ const byte motorQuartoB1 = 15;
 
 const int pinoPIR = 15;
 const int LDR_PIN_Quarto = 34; 
-const int LDR_PIN_Sala = 35; 
-const int LDR_PIN_Banheiro = 19; 
-const int LDR_PIN_Cozinha = 19; //mudar o pino depois 
+const int LDR_PIN_Sala = 19; 
+const int LDR_PIN_Banheiro = 35; 
+const int LDR_PIN_Cozinha = 26; //mudar o pino depois 
 int cachePresenca = 0;
 byte ldrValue = 0;
 

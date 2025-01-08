@@ -113,7 +113,14 @@ void asyncCB(AsyncResult &aResult) {
           startIdx = path.indexOf("/sensores/") + 10;  
           endIdx = path.indexOf("/", startIdx);  
           sensor = path.substring(startIdx, endIdx);
-          int valor = data.toInt();
+          // Serial.print("Tipo do valor: ");
+          // Serial.println(isInteger(data));
+          Serial.print("valor: ");
+          Serial.println(data);
+          int valor=0;
+          String separa = data.substring(data.indexOf(":") + 1);  // Pega tudo após ":"
+          valor = separa.toInt();
+         
           if(sensor != "luz" && sensor != "presenca" && sensor != "umidade" && sensor != "temperatura"){
                 if(sensor == "led_rgb"){
                   int startIdx = path.lastIndexOf("/") + 1; 
@@ -152,6 +159,8 @@ void swhitchComfortable(String nomeComodo, int ultimoValor, String tipoSensor){
 void updateBanheiro(int valor, Sensor sensor, String tipoSensor, String nomeComodo){
    switch(sensor){ 
     case 4: digitalWrite(ledBanheiro, valor);
+    Serial.print("Led banheiro: ");
+    Serial.println(valor);
       break;
   }
 }
