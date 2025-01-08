@@ -165,17 +165,6 @@ void updateCozinha(int valor, Sensor sensor, String tipoSensor, String nomeComod
 
 void updateQuarto(int valor, Sensor sensor, String tipoSensor, String nomeComodo){
    switch(sensor){
-    case 9:
-      if (Serial1.available()) {
-        Serial1.print(valor); // colocar serial.write se der errado
-        Serial.print("servo: ");
-        Serial.println(valor);
-     }  
-      Serial.print("servo sem serial: ");
-        Serial.println(valor);
-      break;
-    case 8:
-    break;
     case 7: 
       break;
     case 6: 
@@ -196,6 +185,15 @@ void updateQuarto(int valor, Sensor sensor, String tipoSensor, String nomeComodo
 
 void updateSala(int valor, Sensor sensor, String tipoSensor, String nomeComodo){
    switch(sensor){
+     case 9:
+        if (Serial1.available()) {
+          Serial1.print(valor); // colocar serial.write se der errado
+          Serial.print("servo: ");
+          Serial.println(valor);
+       }  
+       Serial.print("servo sem serial: ");
+       Serial.println(valor);
+      break;
     case 4: digitalWrite(ledSala, valor);
       break;
   }
