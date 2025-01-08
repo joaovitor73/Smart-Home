@@ -41,6 +41,8 @@ const byte motorQuartoB1 = 15;
 
 DHT dht(DHTPIN, DHTTYPE);
 
+int valores[4];
+
 enum Comodo {
     SALA,
     QUARTO,
@@ -117,24 +119,47 @@ void asyncCB(AsyncResult &aResult) {
           // Serial.println(isInteger(data));
           Serial.print("valor: ");
           Serial.println(data);
-          int valor=0;
-          String separa = data.substring(data.indexOf(":") + 1);  // Pega tudo após ":"
-          valor = separa.toInt();
-         
-          if(sensor != "luz" && sensor != "presenca" && sensor != "umidade" && sensor != "temperatura"){
-                if(sensor == "led_rgb"){
-                  int startIdx = path.lastIndexOf("/") + 1; 
-                  String value = path.substring(startIdx); 
-                  if(value == "r"){
-                    analogWrite(redLedRGB, valor);
-                  }else if(value == "b"){
-                      analogWrite(greenLedRGB, valor);
-                  }else{
-                      analogWrite(blueLedRGB, valor);
-                  }
-                }else{
-                    swhitchComfortable(comodo, valor, sensor);
+          Serial.println(sensor);
+          if(sensor == ""){
+              int startIdx = 0; 
+              int endIdx = 0;  
+
+              for (int i = 0; i < 4; i++) {
+                endIdx = data.indexOf(',', startIdx);
+                if (endIdx == -1) { 
+                  endIdx = data.length();
                 }
+
+                String valorStr = data.substring(startIdx, endIdx); // Extrai o valor como String
+                valores[i] = valorStr.toInt(); // Converte para inteiro
+
+                startIdx = endIdx + 1; // Atualiza o índice inicial para o próximo valor
+              }
+
+              analogWrite(redLedRGB, valores[0]);
+              analogWrite(redLedRGB, valores[1]);
+              analogWrite(redLedRGB, valores[2]);
+              
+          }else{
+            int valor=0;
+            String separa = data.substring(data.indexOf(":") + 1);  // Pega tudo após ":"
+            valor = separa.toInt();
+          
+            if(sensor != "luz" && sensor != "presenca" && sensor != "umidade" && sensor != "temperatura"){
+                  if(sensor == "led_rgb"){
+                    int startIdx = path.lastIndexOf("/") + 1; 
+                    String value = path.substring(startIdx); 
+                    if(value == "r"){
+                      analogWrite(redLedRGB, valor);
+                    }else if(value == "b"){
+                        analogWrite(greenLedRGB, valor);
+                    }else{
+                        analogWrite(blueLedRGB, valor);
+                    }
+                  }else{
+                      swhitchComfortable(comodo, valor, sensor);
+                  }
+            }
           }
       }
   }
