@@ -1,5 +1,5 @@
 class Sensor {
-  final String comodo;
+  late final String comodo;
   final String nome;
   final Map<String, dynamic> dados;
 

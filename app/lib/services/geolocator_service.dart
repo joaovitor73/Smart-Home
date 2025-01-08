@@ -1,13 +1,22 @@
+import 'dart:async';
+
 import 'package:app/services/shared_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
-class GeoLocatorService {
+class GeoLocatorService extends ChangeNotifier {
   String latitudeCasaX1 = "-5.8950000";
   String latitudeCasaX2 = "-5.8950000";
   String longitudeCasaY1 = "-35.630000";
   String longitudeCasaY2 = "-35.630000";
+  String isPresent = "";
 
-  Future<Position> determinePosition() async {
+  GeoLocatorService() {
+    requestPermission();
+    _startListeningToLocation();
+  }
+
+  Future<void> requestPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -29,20 +38,27 @@ class GeoLocatorService {
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
-
-    return await Geolocator.getCurrentPosition();
   }
 
-  Future<void> captureLocation() async {
-    Position? position = await determinePosition();
-    if ((position.latitude >= double.parse(latitudeCasaX1) &&
-            position.latitude <= double.parse(latitudeCasaX2)) &&
-        (position.longitude >= double.parse(longitudeCasaY1) &&
-            position.longitude <= double.parse(longitudeCasaY2))) {
+  void _startListeningToLocation() {
+    Geolocator.getPositionStream(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    ).listen((Position position) {
+      captureLocation(position);
+    });
+  }
+
+  Future<void> captureLocation(Position position) async {
+    if (1 == 1) {
       SharedService.recuperarSensores('casa');
+      isPresent = "Presente";
     } else {
       SharedService.recuperarSensores('fora_casa');
+      isPresent = "Ausente";
     }
     print("Posição: ${position.latitude}, ${position.longitude}");
+    notifyListeners();
   }
 }
