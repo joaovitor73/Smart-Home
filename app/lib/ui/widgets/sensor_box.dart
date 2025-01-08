@@ -23,7 +23,8 @@ class SensorBox extends StatelessWidget {
     required this.value,
     required this.realTimerProvider,
   }) {
-    //Sensor sensor = Sensor(comodo: comodo, nome: sensorName, dados: value);
+    Map<String, dynamic> dados = {value: value};
+    Sensor sensor = Sensor(comodo: comodo, nome: sensorName, dados: dados);
     bValue = "";
     rValue = "";
     gValue = "";
@@ -55,7 +56,11 @@ class SensorBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
     return Container(
+      width: screenWidth * 0.5, // 90% da largura da tela
+      height: screenHeight * 0.2, // 20% da altura da tela
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
@@ -66,8 +71,7 @@ class SensorBox extends StatelessWidget {
           padding: const EdgeInsets.only(right: 0.6),
           child: Icon(icon, size: 30, color: iconColor),
         ),
-
-        // const SizedBox(width: 0.6),
+        const SizedBox(width: 0.6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,9 +107,7 @@ class SensorBox extends StatelessWidget {
                 ),
               if (sensorName == "Presença")
                 Text(
-                  value == "1"
-                      ? "Presença detectada"
-                      : "Nenhuma presença detectada",
+                  value == "1" ? " detectada" : "não detectado",
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w300,
@@ -114,7 +116,7 @@ class SensorBox extends StatelessWidget {
                 ),
               if (sensorName == "Janela")
                 Text(
-                  value == "1" ? "Janela aberta" : "Janela fechada",
+                  value == "1" ? "aberta" : " fechada",
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
@@ -133,16 +135,64 @@ class SensorBox extends StatelessWidget {
             ],
           ),
         ),
+        SizedBox(width: 10),
         if (sensorName == "Lâmpada" || sensorName == "Janela")
-          Switch(
-            value: value != "0" ? false : true, // Valor inicial do switch
-            onChanged: (bool newValue) {
-              value = newValue ? "Ligado" : "Desligado";
-              // realTimerProvider
-              //     .updateData( newValue ? "1" : "0");
-            },
-          ),
+          CustomSwitch(realTimerProvider, comodo, sensorName, value),
       ]),
+    );
+  }
+}
+
+class CustomSwitch extends StatefulWidget {
+  final String sensorName;
+  CustomSwitch(RealtimeService realTimerProvider, String comodo,
+      this.sensorName, String value);
+
+  @override
+  _CustomSwitchState createState() => _CustomSwitchState();
+}
+
+class _CustomSwitchState extends State<CustomSwitch> {
+  bool _value = false;
+  String _label = "Off";
+  late String sensorName;
+  @override
+  void initState() {
+    super.initState();
+    sensorName = widget.sensorName;
+  }
+
+  void _toggleSwitch() {
+    setState(() {
+      _value = !_value;
+      if (_value) {
+        _label = "On";
+      } else {
+        _label = "Off";
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Switch(
+              value: _value,
+              onChanged: (bool newValue) {
+                _toggleSwitch();
+              },
+              activeTrackColor:
+                  widget.sensorName == "Lâmpada" ? Colors.yellow : Colors.blue,
+              inactiveThumbColor: Colors.grey.shade300,
+              inactiveTrackColor: Colors.grey.shade200,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
