@@ -5,8 +5,8 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
-#define RXD1 13 // GPIO 13 como RX do ESP32
-#define TXD1 14 // GPIO 14 como TX do ESP32
+#define RXD1 16 // GPIO 13 como RX do ESP32
+#define TXD1 17 // GPIO 14 como TX do ESP32
 
 // #define RXD2 16 // GPIO 16 como RX do ESP32
 // #define TXD2 17 // GPIO 17 como TX do ESP32
@@ -73,7 +73,7 @@ enum Sensor{
 void setup(){
     Serial.begin(115200);
     // Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
-    Serial2.begin(9600, SERIAL_8N1, RXD1, TXD1); 
+    Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1); 
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -207,7 +207,6 @@ void updateCozinha(int valor, Sensor sensor, int id, const char* tipoSensor, con
 }
 
 void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, const char* nomeComodo){
-    String ausente = Database.get<String>(aClient, "/smart_home/json/ausente");
    switch(sensor){
     // case 9:
     //   if (Serial1.available()) {
@@ -246,17 +245,11 @@ void updateQuarto(int valor, Sensor sensor, int id, const char* tipoSensor, cons
     case 1: pushData(tipoSensor, id, dhtQuarto.readHumidity() , nomeComodo);
             Serial.println(dhtQuarto.readHumidity());
       break;
-    case 0:
-      if(ausente == "1" && Serial2.available()){
-        Serial2.print(valor); // coloca serial.write se der errado
-        Serial.print("pir: ");
-        Serial.println(valor);
-      }
-      break;
   }
 }
 
 void updateSala(int valor, Sensor sensor, int id, const char* tipoSensor, const char* nomeComodo){
+    String ausente = Database.get<String>(aClient, "/smart_home/json/ausente");
    switch(sensor){
     case 4: digitalWrite(ledSala, valor);
       break;
@@ -264,7 +257,21 @@ void updateSala(int valor, Sensor sensor, int id, const char* tipoSensor, const 
             pushData(tipoSensor, id, ldrValue , nomeComodo);
             Serial.println(ldrValue);
       break;
-    case 0: pushData(tipoSensor, id, digitalRead(pinoPIR), nomeComodo);
+    // case 0: 
+    // pushData(tipoSensor, id, digitalRead(pinoPIR), nomeComodo);
+    case 0:
+      // if(ausente == "1" && Serial1.available()){
+      if(Serial1.available()){
+        // Serial1.print(valor); // coloca serial.write se der errado
+        Serial.print("pir: ");
+      Serial.println(Serial1.readStringUntil('\n'));
+        // pushData(tipoSensor, id, Serial1.read(), nomeComodo);
+      }
+
+      Serial.print("Ausente: ");
+      Serial.println(Serial1.available());
+      
+      break;
       break;
   }
 }
