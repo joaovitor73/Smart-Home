@@ -19,9 +19,11 @@ class SharedService {
 
   static Future<List<Sensor>> recuperarSensores(String rotina) async {
     if (rotina == "Casa") {
-      await realtimeService.updateAusencia(estado: 0);
+      print("Modo Casa");
+      // await realtimeService.updateAusencia(estado: 0);
     } else {
-      await realtimeService.updateAusencia(estado: 1);
+      print("Modo Ausente");
+      // await realtimeService.updateAusencia(estado: 1);
     }
 
     final prefs = await SharedPreferences.getInstance();

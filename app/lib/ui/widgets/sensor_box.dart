@@ -85,9 +85,18 @@ class SensorBox extends StatelessWidget {
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (sensorName == "Luminosidade" || sensorName == "Umidade")
+                  if (sensorName == "Umidade")
                     Text(
                       '$value % ',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  if (sensorName == "Luminosidade")
+                    Text(
+                      '$value ',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
@@ -236,7 +245,6 @@ class _CustomSwitchState extends State<CustomSwitch> {
           "valor": _value ? 1 : 0,
         },
       );
-      print(sensor.dados);
       // Chama o método updateData com o sensor
       widget.realTimerProvider.updateData(sensor: sensor);
     });

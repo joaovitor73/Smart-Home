@@ -8,10 +8,9 @@ class GeoLocatorService extends ChangeNotifier {
   String isPresent = "";
   String valorAnterior = "";
 
-  // Coordenadas da sua casa
   final double homeLatitude = -5.885995;
   final double homeLongitude = -35.363265;
-  final double homeRadius = 5.0; // Raio de 5 metros em torno da casa
+  final double homeRadius = 5.0;
 
   Position? lastKnownPosition;
 
@@ -65,7 +64,6 @@ class GeoLocatorService extends ChangeNotifier {
       );
 
       if (distance < 1.0) {
-        // Ignora pequenas mudanças (menos de 1 metro)
         return;
       }
     }
@@ -88,7 +86,6 @@ class GeoLocatorService extends ChangeNotifier {
   }
 
   bool _verificarPresenca(double latitude, double longitude) {
-    // Calcula a distância entre a posição atual e a posição da casa
     double distance = Geolocator.distanceBetween(
       homeLatitude,
       homeLongitude,
@@ -96,7 +93,6 @@ class GeoLocatorService extends ChangeNotifier {
       longitude,
     );
 
-    // Retorna true se estiver dentro do raio de 5 metros
     return distance <= homeRadius;
   }
 
@@ -108,6 +104,6 @@ class GeoLocatorService extends ChangeNotifier {
       SharedService.recuperarSensores('Fora de Casa');
       isPresent = "Ausente";
     }
-    valorAnterior = isPresent; // Atualiza o estado anterior
+    valorAnterior = isPresent;
   }
 }
