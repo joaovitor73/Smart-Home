@@ -149,17 +149,24 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.only(
                   top: 20, left: 20, right: 20, bottom: 0),
-              child: ElevatedButton.icon(
-                onPressed: realTimerProvider.modoCabare,
-                icon: const Icon(Icons.favorite, color: Colors.blue),
-                label: const Text(
-                  "Modo Love",
-                  style: TextStyle(color: Colors.blue),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+              child: GestureDetector(
+                onTap: realTimerProvider
+                    .modoCabareLigar, // Ativa o modo quando clicado
+                onLongPress: realTimerProvider
+                    .modoCabareDesligar, // Desativa o modo ao pressionar
+                child: ElevatedButton.icon(
+                  onPressed:
+                      null, // Desative o onPressed do botão, pois usamos GestureDetector
+                  icon: const Icon(Icons.favorite, color: Colors.blue),
+                  label: const Text(
+                    "Modo Love",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20),
+                  ),
                 ),
               ),
             ),

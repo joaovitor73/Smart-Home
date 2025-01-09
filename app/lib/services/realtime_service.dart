@@ -31,9 +31,31 @@ class RealtimeService {
   //   }
   // }
 
-  Future<void> modoCabare() async {
+  Future<void> modoCabareLigar() async {
     final databaseRef = FirebaseDatabase.instance.ref('smart_home/json');
+    final motor = FirebaseDatabase.instance
+        .ref('smart_home/json/comodos/quarto/sensores/motor');
+    final ar = FirebaseDatabase.instance
+        .ref('smart_home/json/comodos/quarto/sensores/lcd');
     try {
+      await ar.update({'valor': 20});
+      await motor.update({'valor': 90});
+      await databaseRef.update({'r': "0,0,255,0"});
+      print('Atualização realizada com sucesso!');
+    } catch (error) {
+      print('Erro ao atualizar: $error');
+    }
+  }
+
+  Future<void> modoCabareDesligar() async {
+    final databaseRef = FirebaseDatabase.instance.ref('smart_home/json');
+    final motor = FirebaseDatabase.instance
+        .ref('smart_home/json/comodos/quarto/sensores/motor');
+    final ar = FirebaseDatabase.instance
+        .ref('smart_home/json/comodos/quarto/sensores/lcd');
+    try {
+      await ar.update({'valor': 20});
+      await motor.update({'valor': 0});
       await databaseRef.update({'r': "0,0,255,0"});
       print('Atualização realizada com sucesso!');
     } catch (error) {
