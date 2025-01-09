@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class Ausente extends StatelessWidget {
   final String isAusente;
 
-  Ausente({required this.isAusente});
+  const Ausente({super.key, required this.isAusente});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 20),
+      margin: const EdgeInsets.only(top: 20),
       child: Center(
         child: Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: const Color.fromARGB(255, 255, 255, 255),
             borderRadius: BorderRadius.circular(25),
@@ -19,7 +19,7 @@ class Ausente extends StatelessWidget {
           ),
           child: Text(
             isAusente,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.black,
             ),

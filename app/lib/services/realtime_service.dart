@@ -2,11 +2,10 @@ import 'package:app/domain/Sensor.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class RealtimeService {
-  get realtimeService => null;
-
   Future<void> updateData({
     required Sensor sensor,
   }) async {
+    print("Atualizando dados do sensor: ${sensor.nome}");
     String nome = sensor.nome;
     String comodo = sensor.comodo;
     final databaseRef = FirebaseDatabase.instance

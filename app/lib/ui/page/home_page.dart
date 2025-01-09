@@ -95,6 +95,11 @@ class _HomePageState extends State<HomePage> {
                     'icon': Icons.access_alarm,
                     'iconColor': Colors.blue
                   },
+                  {
+                    'sensorName': 'Servo',
+                    'icon': Icons.window,
+                    'iconColor': Colors.blue
+                  }
                 ],
                 realTimerProvider),
             RoomInfo(roomName: 'Banheiro', icon: Icons.bathroom),
@@ -176,11 +181,6 @@ class _HomePageState extends State<HomePage> {
                     'icon': Icons.lightbulb_outline,
                     'iconColor': Colors.purple
                   },
-                  {
-                    'sensorName': 'Servo',
-                    'icon': Icons.window,
-                    'iconColor': Colors.blue
-                  },
                 ],
                 realTimerProvider),
             Padding(
@@ -219,17 +219,14 @@ Widget _buildRoomSensors(SensorDataProvider provider, String roomName,
       children: sensors.map((sensor) {
         final sensorKey = '$roomName/${sensor['sensorName'].toLowerCase()}';
         String sensorName = sensor['sensorName'];
-        String displayValue;
         final sensorValue =
             provider.fetchedData[sensorKey]?.toString() ?? "...Loading";
-        displayValue = sensorValue;
         if (sensor['sensorName'] == "led") {
           sensorName = "Lâmpada";
         } else if (sensor['sensorName'] == "luz") {
           sensorName = "Luminosidade";
         } else if (sensor['sensorName'] == "presenca") {
           sensorName = "Presença";
-          displayValue = sensorValue == "1" ? "Detectado" : "Não detectado";
         } else if (sensor['sensorName'] == "lcd") {
           sensorName = "Ar-Condicionado";
         } else if (sensor['sensorName'] == "led_rgb") {
