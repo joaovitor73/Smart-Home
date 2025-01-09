@@ -19,17 +19,16 @@ class RealtimeService {
     }
   }
 
-  // Future<void> updateAusencia({
-  //   required int estado,
-  // }) async {
-  //   final databaseRef = FirebaseDatabase.instance.ref('smart_home/json');
-  //   try {
-  //     await databaseRef.update({'ausente': estado});
-  //     print('Atualização realizada com sucesso!');
-  //   } catch (error) {
-  //     print('Erro ao atualizar: $error');
-  //   }
-  // }
+  Future<void> updateDataRGB({
+    required String dados,
+  }) async {
+    final databaseRef = FirebaseDatabase.instance.ref('smart_home/json');
+    try {
+      await databaseRef.update({'r': dados});
+    } catch (error) {
+      print('Erro ao atualizar: $error');
+    }
+  }
 
   Future<void> modoCabareLigar() async {
     final databaseRef = FirebaseDatabase.instance.ref('smart_home/json');
