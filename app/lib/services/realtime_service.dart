@@ -39,7 +39,7 @@ class RealtimeService {
         .ref('smart_home/json/comodos/quarto/sensores/lcd');
     try {
       await ar.update({'valor': 20});
-      await motor.update({'valor': 90});
+      await motor.update({'valor': 120});
       await databaseRef.update({'r': "0,0,255,0"});
       print('Atualização realizada com sucesso!');
     } catch (error) {
