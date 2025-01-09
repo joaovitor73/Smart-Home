@@ -146,6 +146,23 @@ class _HomePageState extends State<HomePage> {
                   },
                 ],
                 realTimerProvider),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 20, left: 20, right: 20, bottom: 0),
+              child: ElevatedButton.icon(
+                onPressed: realTimerProvider.modoCabare,
+                icon: const Icon(Icons.favorite, color: Colors.blue),
+                label: const Text(
+                  "Modo Love",
+                  style: TextStyle(color: Colors.blue),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                ),
+              ),
+            ),
             RoomInfo(roomName: 'Quarto', icon: Icons.bed),
             _buildRoomSensors(
                 sensorDataProvider,
@@ -183,19 +200,6 @@ class _HomePageState extends State<HomePage> {
                   },
                 ],
                 realTimerProvider),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ElevatedButton.icon(
-                onPressed: realTimerProvider.modoCabare,
-                icon: const Icon(Icons.flash_on, color: Colors.white),
-                label: const Text("Ativar Modo Cabaré"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                ),
-              ),
-            ),
           ],
         ),
       ),

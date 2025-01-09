@@ -1,5 +1,6 @@
 import 'package:app/ui/widgets/drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -29,7 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'sair') {
-              print('Saindo...');
+              SystemNavigator.pop(); // Fecha o app
             }
           },
           icon: Icon(Icons.more_vert, color: Colors.white),

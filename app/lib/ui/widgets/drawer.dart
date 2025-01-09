@@ -63,14 +63,8 @@ class AppDrawer extends StatelessWidget {
           ),
           Divider(),
           _buildDrawerItem(
-            icon: Icons.notifications,
-            title: 'Notificações',
-            screen: '',
-            context: context,
-          ),
-          _buildDrawerItem(
             icon: Icons.account_circle,
-            title: 'User',
+            title: 'Admin',
             screen: '',
             context: context,
           ),
