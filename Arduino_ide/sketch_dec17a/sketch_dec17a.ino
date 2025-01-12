@@ -6,10 +6,10 @@
 
 #define WIFI_SSID "A"
 #define WIFI_PASSWORD "12345678"
-#define API_KEY "AIzaSyB2hyLRaBR3ZVqmnHYkvXN1IvZV_NJusFc"
+#define API_KEY ""
 #define USER_EMAIL "adm@gmail.com"
 #define USER_PASSWORD "admin123"
-#define DATABASE_URL "https://smart-home-876c0-default-rtdb.firebaseio.com/"
+#define DATABASE_URL ""
 #define DHTTYPE DHT22
 
 #define RXD1 13 // GPIO 13 como RX do ESP32
